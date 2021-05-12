@@ -1,4 +1,7 @@
 from tkinter import StringVar, Toplevel, Label, Entry, Button, END
+from PIL import Image, ImageTk
+
+GRID_PHOTO_PATH = r"assets\grid_photos"
 
 from Authentication.Authenticate import Authenticate
 
@@ -24,19 +27,18 @@ class Login(object):
         self.login_screen.geometry("300x250")
 
         Label(self.login_screen, text="Please enter details below to login").pack()
+
         Label(self.login_screen, text="").pack()
         Label(self.login_screen, text="Username * ").pack()
-
         self.username_login_entry = Entry(self.login_screen, textvariable=self.username)
         self.username_login_entry.pack()
 
         Label(self.login_screen, text="").pack()
         Label(self.login_screen, text="Password * ").pack()
-
         self.password_login_entry = Entry(self.login_screen, textvariable=self.password, show='*')
         self.password_login_entry.pack()
-        Label(self.login_screen, text="").pack()
 
+        Label(self.login_screen, text="").pack()
         Button(self.login_screen, text="Login", width=10, height=1, command=self._login_verify).pack()
 
     def _login_verify(self):
@@ -56,12 +58,39 @@ class Login(object):
         else:
             self._password_not_recognised()
 
+    def print_junk(self, i):
+        print("Some junk: " + str(i))
+
     def _login_success(self):
         self.login_success_screen = Toplevel(self.login_screen)
         self.login_success_screen.title("Success")
-        self.login_success_screen.geometry("150x100")
-        Label(self.login_success_screen, text="Login Success").pack()
-        Button(self.login_success_screen, text="OK", command=self._delete_login_success).pack()
+        self.login_success_screen.geometry("520x520")
+        # Label(self.login_success_screen, text="Login Success").pack()
+        # Button(self.login_success_screen, text="OK", command=self._delete_login_success).pack()
+
+        image = Image.open(GRID_PHOTO_PATH + "\\number1.png")
+        photo = ImageTk.PhotoImage(image)
+        label = Button(self.login_success_screen, command=lambda: self.print_junk(1), image=photo)
+        label.image = photo
+        label.grid(row=0, column=0)
+
+        image = Image.open(GRID_PHOTO_PATH + "\\number2.png")
+        photo = ImageTk.PhotoImage(image)
+        label = Button(self.login_success_screen, command=lambda: self.print_junk(2), image=photo)
+        label.image = photo
+        label.grid(row=0, column=1)
+
+        image = Image.open(GRID_PHOTO_PATH + "\\number3.png")
+        photo = ImageTk.PhotoImage(image)
+        label = Button(self.login_success_screen, command=lambda: self.print_junk(3), image=photo)
+        label.image = photo
+        label.grid(row=1, column=0)
+
+        image = Image.open(GRID_PHOTO_PATH + "\\number4.png")
+        photo = ImageTk.PhotoImage(image)
+        label = Button(self.login_success_screen, command=lambda: self.print_junk(4), image=photo)
+        label.image = photo
+        label.grid(row=1, column=1)
 
     def _password_not_recognised(self):
         self.password_not_recog_screen = Toplevel(self.login_screen)
