@@ -18,6 +18,10 @@ class Authenticate(object):
     def check_user_exists(self, username):
         return any(True for user in self.users if user['user'] == username)
 
+    def get_authentication_methods(self, username):
+        passwords = next(user["passwords"] for user in self.users if user['user'] == username)
+        # TODO: return all ways which are needed
+
     def verify_password(self, username, password_input, password_type):
         password = next(user["passwords"][password_type] for user in self.users if user['user'] == username)
         salt, hashed_password = password[:HASH_RESULT_SIZE], password[HASH_RESULT_SIZE:]

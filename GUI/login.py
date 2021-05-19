@@ -53,6 +53,8 @@ class Login(object):
         if not self.auth.check_user_exists(username):
             self._user_not_found()
         elif self.auth.verify_user_text_password(username, password):
+            self.auth.get_authentication_methods(username)
+            # TODO: check all methods and open many windows, wait for all of them
             self._grid_login(username)
         else:
             self._password_not_recognised()
