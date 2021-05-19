@@ -1,6 +1,6 @@
 from tkinter import *
 
-from Authentication.Authenticate import Authenticate
+from Authentication.authenticate import Authenticate
 from GUI.login import Login
 from GUI.register import Register
 

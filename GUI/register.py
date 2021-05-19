@@ -1,5 +1,14 @@
+import base64
+import codecs
+import io
 import json
 from tkinter import StringVar, Toplevel, Label, Entry, Button, END
+import hashlib
+
+import binascii
+
+from Utils.common import HASH_ITERATIONS_AMOUNT
+from Utils.general_utils import random_salt
 
 
 class Register(object):
@@ -40,10 +49,21 @@ class Register(object):
         username_info = self.username.get()
         text_password = self.text_password.get()
 
+        text_salt = random_salt()
+
+        hashed_password = hashlib.pbkdf2_hmac(
+            'sha512',
+            text_password.encode('utf-8'),
+            text_salt,
+            HASH_ITERATIONS_AMOUNT
+        )
+
+        user_text_password = text_salt + binascii.hexlify(hashed_password)
+
         new_user = {
             "user": username_info,
             "passwords": {
-                "text": text_password,
+                "text": user_text_password.decode('ascii'),
                 "grid": "2341"
             }
         }
