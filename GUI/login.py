@@ -10,6 +10,7 @@ class Login(object):
         self.login_screen = None
         self.user_not_found_screen = None
         self.password_not_recog_screen = None
+        self.photo_grid_screen = None
         self.login_success_screen = None
         self.username_login_entry = None
         self.password_login_entry = None
@@ -53,9 +54,13 @@ class Login(object):
         if not self.auth.check_user_exists(username):
             self._user_not_found()
         elif self.auth.verify_user_text_password(username, password):
-            self.auth.get_authentication_methods(username)
-            # TODO: check all methods and open many windows, wait for all of them
-            self._grid_login(username)
+            auth_methods = self.auth.get_authentication_methods(username)
+
+            if "grid" in auth_methods:
+                self._grid_login(username)
+                self.login_screen.wait_window(self.photo_grid_screen)
+
+            self._login_success()
         else:
             self._password_not_recognised()
 
@@ -68,7 +73,7 @@ class Login(object):
 
     def _grid_login_verify(self, username):
         if self.auth.verify_user_grid_password(username, self.grid_password):
-            self._login_success()
+            self._delete_photo_grid_screen()
         else:
             self.grid_password = ""
             self._password_not_recognised()
@@ -100,7 +105,7 @@ class Login(object):
 
         button = Button(self.photo_grid_screen, text="Login", width=10, height=1,
                         command=lambda: self._grid_login_verify(username))
-        label=Label(self.photo_grid_screen, text="")
+        label = Label(self.photo_grid_screen, text="")
         label.grid(row=3, column=1)
         button.grid(row=4, column=1)
 
@@ -120,7 +125,8 @@ class Login(object):
 
     def _delete_login_success(self):
         self.login_success_screen.destroy()
-        self.photo_grid_screen.destroy()
+        if self.photo_grid_screen is not None:
+            self.photo_grid_screen.destroy()
         self.login_screen.destroy()
 
     def _delete_password_not_recognised(self):
@@ -128,3 +134,6 @@ class Login(object):
 
     def _delete_user_not_found_screen(self):
         self.user_not_found_screen.destroy()
+
+    def _delete_photo_grid_screen(self):
+        self.photo_grid_screen.destroy()

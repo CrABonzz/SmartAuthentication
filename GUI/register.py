@@ -107,6 +107,9 @@ class Register(object):
         if grid_auth.get():
             self._create_grid_password()
             self.register_screen.wait_window(self.photo_grid_screen)
+            grid_password = self._hash_password(self.grid_password).decode('ascii')
+        else:
+            grid_password = ""
 
         username = self.username.get()
 
@@ -114,7 +117,7 @@ class Register(object):
             "user": username,
             "passwords": {
                 "text": self._hash_password(self.text_password.get()).decode('ascii'),
-                "grid": self._hash_password(self.grid_password).decode('ascii')
+                "grid": grid_password
             }
         }
 
@@ -126,12 +129,23 @@ class Register(object):
             users_file.truncate()
             json.dump(all_users, users_file)
 
-        self.username_entry.delete(0, END)
-        self.text_password_entry.delete(0, END)
+        # self.username_entry.delete(0, END)
+        # self.text_password_entry.delete(0, END)
 
+        self._register_success()
+
+    def _register_success(self):
         self.auth.update_users_file()
 
-        Label(self.register_screen, text="Registration Success", fg="green", font=("calibri", 11)).pack()
+        self.register_success_screen = Toplevel()
+        self.register_success_screen.title("Success")
+        self.register_success_screen.geometry("128x128")
+        Label(self.register_success_screen, text="Register Success").pack()
+        Button(self.register_success_screen, text="OK", command=self._delete_register_registering).pack()
 
     def _delete_grid_registering(self):
         self.photo_grid_screen.destroy()
+
+    def _delete_register_registering(self):
+        self.register_screen.destroy()
+        self.register_success_screen.destroy()

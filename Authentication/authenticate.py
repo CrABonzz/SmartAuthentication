@@ -20,7 +20,7 @@ class Authenticate(object):
 
     def get_authentication_methods(self, username):
         passwords = next(user["passwords"] for user in self.users if user['user'] == username)
-        # TODO: return all ways which are needed
+        return [key for key in passwords.keys() if passwords[key] != ""]
 
     def verify_password(self, username, password_input, password_type):
         password = next(user["passwords"][password_type] for user in self.users if user['user'] == username)
@@ -36,7 +36,7 @@ class Authenticate(object):
         return hashed_password == binascii.hexlify(hashed_password_input).decode('ascii')
 
     def verify_user_text_password(self, username, password_input):
-       return self.verify_password(username, password_input, "text")
+        return self.verify_password(username, password_input, "text")
 
     def verify_user_grid_password(self, username, password_input):
         return self.verify_password(username, password_input, "grid")
