@@ -3,11 +3,9 @@ from PIL import Image, ImageTk
 
 GRID_PHOTO_PATH = r"assets\grid_photos"
 
-from Authentication.Authenticate import Authenticate
-
 
 class Login(object):
-    def __init__(self, main_screen):
+    def __init__(self, auth, main_screen):
         self.main_screen = main_screen
         self.login_screen = None
         self.user_not_found_screen = None
@@ -19,7 +17,7 @@ class Login(object):
         self.username = StringVar()
         self.password = StringVar()
 
-        self.auth = Authenticate()
+        self.auth = auth
 
     def login_user(self):
         self.login_screen = Toplevel(self.main_screen)
@@ -49,19 +47,18 @@ class Login(object):
 
         print(username)
         print(password)
-        self.auth.verify_user(username, password)
 
         if not self.auth.check_user_exists(username):
             self._user_not_found()
-        elif self.auth.verify_user(username, password):
-            self._login_success()
+        elif self.auth.verify_user_text_password(username, password):
+            self._text_login_success()
         else:
-            self._password_not_recognised()
+            self._text_password_not_recognised()
 
     def print_junk(self, i):
         print("Some junk: " + str(i))
 
-    def _login_success(self):
+    def _text_login_success(self):
         self.login_success_screen = Toplevel(self.login_screen)
         self.login_success_screen.title("Success")
         self.login_success_screen.geometry("520x520")
@@ -92,7 +89,7 @@ class Login(object):
         label.image = photo
         label.grid(row=1, column=1)
 
-    def _password_not_recognised(self):
+    def _text_password_not_recognised(self):
         self.password_not_recog_screen = Toplevel(self.login_screen)
         self.password_not_recog_screen.title("Success")
         self.password_not_recog_screen.geometry("150x100")

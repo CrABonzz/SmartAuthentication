@@ -1,10 +1,18 @@
+import json
+
+
 class Authenticate(object):
     def __init__(self):
-        with open(r"assets\users.txt") as users_file:
-            self.users = users_file.readlines()
+        self.users = None
+        self.update_users_file()
+
+    def update_users_file(self):
+        with open(r"assets\users.json", 'r') as users_file:
+            all_users = json.load(users_file)
+            self.users = all_users["users"]
 
     def check_user_exists(self, username):
-        return username == "user"
+        return any(True for user in self.users if user['user'] == username)
 
-    def verify_user(self, username, password):
-        return username + " " + password in self.users
+    def verify_user_text_password(self, username, password):
+        return next(user["passwords"]["text"] for user in self.users if user['user'] == username) == password
