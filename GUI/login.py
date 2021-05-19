@@ -19,6 +19,8 @@ class Login(object):
 
         self.auth = auth
 
+        self.grid_password = ""
+
     def login_user(self):
         self.login_screen = Toplevel(self.main_screen)
         self.login_screen.title("Login")
@@ -37,9 +39,9 @@ class Login(object):
         self.password_login_entry.pack()
 
         Label(self.login_screen, text="").pack()
-        Button(self.login_screen, text="Login", width=10, height=1, command=self._login_verify).pack()
+        Button(self.login_screen, text="Login", width=10, height=1, command=self._text_login_verify).pack()
 
-    def _login_verify(self):
+    def _text_login_verify(self):
         username = self.username.get()
         password = self.password.get()
         self.username_login_entry.delete(0, END)
@@ -51,43 +53,49 @@ class Login(object):
         if not self.auth.check_user_exists(username):
             self._user_not_found()
         elif self.auth.verify_user_text_password(username, password):
-            self._text_login_success()
+            self._grid_login(username)
         else:
             self._text_password_not_recognised()
 
-    def print_junk(self, i):
-        print("Some junk: " + str(i))
-
-    def _text_login_success(self):
+    def _login_success(self):
         self.login_success_screen = Toplevel(self.login_screen)
         self.login_success_screen.title("Success")
-        self.login_success_screen.geometry("520x520")
-        # Label(self.login_success_screen, text="Login Success").pack()
-        # Button(self.login_success_screen, text="OK", command=self._delete_login_success).pack()
+        self.login_success_screen.geometry("128x128")
+        Label(self.login_success_screen, text="Login Success").pack()
+        Button(self.login_success_screen, text="OK", command=self._delete_login_success).pack()
 
-        image = Image.open(GRID_PHOTO_PATH + "\\number1.png")
-        photo = ImageTk.PhotoImage(image)
-        label = Button(self.login_success_screen, command=lambda: self.print_junk(1), image=photo)
-        label.image = photo
-        label.grid(row=0, column=0)
+    def _grid_login_verify(self, username):
+        if self.auth.verify_user_grid_password(username, self.grid_password):
+            self._login_success()
 
-        image = Image.open(GRID_PHOTO_PATH + "\\number2.png")
-        photo = ImageTk.PhotoImage(image)
-        label = Button(self.login_success_screen, command=lambda: self.print_junk(2), image=photo)
-        label.image = photo
-        label.grid(row=0, column=1)
+    def print_junk(self, i):
+        self.grid_password += str(i)
 
-        image = Image.open(GRID_PHOTO_PATH + "\\number3.png")
+    def _add_photo_button(self, photo_name, screen, row, column, i):
+        image = Image.open(GRID_PHOTO_PATH + "\\" + photo_name)
         photo = ImageTk.PhotoImage(image)
-        label = Button(self.login_success_screen, command=lambda: self.print_junk(3), image=photo)
+        label = Button(screen, command=lambda: self.print_junk(i), image=photo)
         label.image = photo
-        label.grid(row=1, column=0)
+        label.grid(row=row, column=column)
 
-        image = Image.open(GRID_PHOTO_PATH + "\\number4.png")
-        photo = ImageTk.PhotoImage(image)
-        label = Button(self.login_success_screen, command=lambda: self.print_junk(4), image=photo)
-        label.image = photo
-        label.grid(row=1, column=1)
+    def _grid_login(self, username):
+        self.photo_grid_screen = Toplevel(self.login_screen)
+        self.photo_grid_screen.title("Photo grid")
+        self.photo_grid_screen.geometry("400x460")
+
+        self._add_photo_button("delicious.png", self.photo_grid_screen, 0, 0, 0)
+        self._add_photo_button("digg.png", self.photo_grid_screen, 0, 1, 1)
+        self._add_photo_button("furl.png", self.photo_grid_screen, 0, 2, 2)
+        self._add_photo_button("flickr.png", self.photo_grid_screen, 1, 0, 3)
+        self._add_photo_button("reddit.png", self.photo_grid_screen, 1, 1, 4)
+        self._add_photo_button("rss.png", self.photo_grid_screen, 1, 2, 5)
+        self._add_photo_button("stumbleupon.png", self.photo_grid_screen, 2, 0, 6)
+        self._add_photo_button("yahoo.png", self.photo_grid_screen, 2, 1, 7)
+        self._add_photo_button("youtube.png", self.photo_grid_screen, 2, 2, 8)
+
+        button = Button(self.photo_grid_screen, text="Login", width=10, height=1,
+                        command=lambda: self._grid_login_verify(username))
+        button.grid(row=3, column=1)
 
     def _text_password_not_recognised(self):
         self.password_not_recog_screen = Toplevel(self.login_screen)
