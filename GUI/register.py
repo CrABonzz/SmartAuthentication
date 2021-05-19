@@ -49,7 +49,7 @@ class Register(object):
         check_button.pack(anchor=W, side=LEFT)
 
         grid_auth = BooleanVar()
-        check_button = Checkbutton(self.register_screen, text="Grid", variable=grid_auth)
+        check_button = Checkbutton(self.register_screen, text="Grid", onvalue=True, offvalue=False, variable=grid_auth)
         check_button.pack(side=LEFT)
 
         todo_auth = BooleanVar()
@@ -104,7 +104,7 @@ class Register(object):
         button.grid(row=4, column=1)
 
     def _register_user(self, grid_auth, todo_auth):
-        if grid_auth:
+        if grid_auth.get():
             self._create_grid_password()
             self.register_screen.wait_window(self.photo_grid_screen)
 
