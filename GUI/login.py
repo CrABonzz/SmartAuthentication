@@ -55,7 +55,7 @@ class Login(object):
         elif self.auth.verify_user_text_password(username, password):
             self._grid_login(username)
         else:
-            self._text_password_not_recognised()
+            self._password_not_recognised()
 
     def _login_success(self):
         self.login_success_screen = Toplevel(self.login_screen)
@@ -67,14 +67,17 @@ class Login(object):
     def _grid_login_verify(self, username):
         if self.auth.verify_user_grid_password(username, self.grid_password):
             self._login_success()
+        else:
+            self.grid_password = ""
+            self._password_not_recognised()
 
-    def print_junk(self, i):
+    def _build_grid_password(self, i):
         self.grid_password += str(i)
 
     def _add_photo_button(self, photo_name, screen, row, column, i):
         image = Image.open(GRID_PHOTO_PATH + "\\" + photo_name)
         photo = ImageTk.PhotoImage(image)
-        label = Button(screen, command=lambda: self.print_junk(i), image=photo)
+        label = Button(screen, command=lambda: self._build_grid_password(i), image=photo)
         label.image = photo
         label.grid(row=row, column=column)
 
@@ -95,11 +98,13 @@ class Login(object):
 
         button = Button(self.photo_grid_screen, text="Login", width=10, height=1,
                         command=lambda: self._grid_login_verify(username))
-        button.grid(row=3, column=1)
+        label=Label(self.photo_grid_screen, text="")
+        label.grid(row=3, column=1)
+        button.grid(row=4, column=1)
 
-    def _text_password_not_recognised(self):
+    def _password_not_recognised(self):
         self.password_not_recog_screen = Toplevel(self.login_screen)
-        self.password_not_recog_screen.title("Success")
+        self.password_not_recog_screen.title("Invalid password")
         self.password_not_recog_screen.geometry("150x100")
         Label(self.password_not_recog_screen, text="Invalid Password ").pack()
         Button(self.password_not_recog_screen, text="OK", command=self._delete_password_not_recognised).pack()
@@ -113,6 +118,8 @@ class Login(object):
 
     def _delete_login_success(self):
         self.login_success_screen.destroy()
+        self.photo_grid_screen.destroy()
+        self.login_screen.destroy()
 
     def _delete_password_not_recognised(self):
         self.password_not_recog_screen.destroy()
