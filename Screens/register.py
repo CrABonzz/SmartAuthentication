@@ -2,10 +2,11 @@ import binascii
 import hashlib
 import json
 from tkinter import StringVar, Toplevel, Label, Entry, Button, END, Checkbutton, LEFT, BOTTOM, W, BooleanVar, S, \
-    DISABLED
+    DISABLED, TOP
 from PIL import Image, ImageTk
 
-from Screens.login import GRID_PHOTO_PATH
+from Screens.AuthenticationScreens.grid_photos_screen import GRID_PHOTO_PATH
+from Screens.AuthenticationScreens.pixels_screen import PIXEL_PHOTO_PATH
 from Utils.common import HASH_ITERATIONS_AMOUNT
 from Utils.general_utils import random_salt
 
@@ -21,9 +22,13 @@ class Register(object):
         self.username_entry = None
         self.text_password_entry = None
         self.photo_grid_screen = None
+        self.pixels_screen = None
 
         self.grid_password = ""  # TODO: store hidden
+        self._clicks = ""
 
+
+    # TODO: rename method
     def register_user(self):
         self.register_screen = Toplevel(self.main_screen)
         self.register_screen.title("Register")
@@ -52,13 +57,13 @@ class Register(object):
         check_button = Checkbutton(self.register_screen, text="Grid", onvalue=True, offvalue=False, variable=grid_auth)
         check_button.pack(side=LEFT)
 
-        todo_auth = BooleanVar()
-        check_button = Checkbutton(self.register_screen, text="TODO", variable=todo_auth)
+        pixels_auth = BooleanVar()
+        check_button = Checkbutton(self.register_screen, text="Pixels", variable=pixels_auth)
         check_button.pack(side=LEFT)
 
         Label(self.register_screen, text="").pack()
         Button(self.register_screen, text="Register", width=10, height=1, bg="blue",
-               command=lambda: self._register_user(grid_auth, todo_auth)).pack(side=BOTTOM, anchor=S)
+               command=lambda: self._register_user(grid_auth, pixels_auth)).pack(side=BOTTOM, anchor=S)
 
     def _hash_password(self, password):
         salt = random_salt()
@@ -103,7 +108,25 @@ class Register(object):
         label.grid(row=3, column=1)
         button.grid(row=4, column=1)
 
-    def _register_user(self, grid_auth, todo_auth):
+    def _create_pixels_password(self):
+        self.pixels_screen = Toplevel(self.register_screen)
+        self.pixels_screen.title("Photo grid")
+        self.pixels_screen.geometry("750x550")
+
+        photo = ImageTk.PhotoImage(Image.open(PIXEL_PHOTO_PATH + "\\" + "switzerland.jpg"))
+        label = Button(self.pixels_screen, image=photo)
+        label.image = photo
+        label.bind("<Button-1>", self._pixels_click)
+        label.pack(side=TOP)
+
+        button = Button(self.pixels_screen, text="Finished", width=10, height=1,
+                        command=self._delete_pixels_registering)
+        button.pack()
+
+    def _pixels_click(self, coordinates):
+        self._clicks += str(coordinates.x) + "-" + str(coordinates.y) + ", "
+
+    def _register_user(self, grid_auth, pixels_auth):
         if grid_auth.get():
             self._create_grid_password()
             self.register_screen.wait_window(self.photo_grid_screen)
@@ -111,13 +134,21 @@ class Register(object):
         else:
             grid_password = ""
 
+        if pixels_auth.get():
+            self._create_pixels_password()
+            self.register_screen.wait_window(self.pixels_screen)
+            pixels_password = str(self._clicks)
+        else:
+            pixels_password = ""
+
         username = self.username.get()
 
         new_user = {
             "user": username,
             "passwords": {
                 "text": self._hash_password(self.text_password.get()).decode('ascii'),
-                "grid": grid_password
+                "grid": grid_password,
+                "pixels": pixels_password
             }
         }
 
@@ -129,7 +160,7 @@ class Register(object):
             users_file.truncate()
             json.dump(all_users, users_file)
 
-        # self.username_entry.delete(0, END)
+        # self.username_entry.delete(0, END)    # TODO: needed?
         # self.text_password_entry.delete(0, END)
 
         self._register_success()
@@ -145,6 +176,9 @@ class Register(object):
 
     def _delete_grid_registering(self):
         self.photo_grid_screen.destroy()
+
+    def _delete_pixels_registering(self):
+        self.pixels_screen.destroy()
 
     def _delete_register_registering(self):
         self.register_screen.destroy()

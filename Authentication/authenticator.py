@@ -2,10 +2,12 @@ import binascii
 import hashlib
 import json
 
-from Utils.common import HASH_ITERATIONS_AMOUNT, HASH_RESULT_SIZE
+import math
+
+from Utils.common import HASH_ITERATIONS_AMOUNT, HASH_RESULT_SIZE, DISTANCE_GRANUALITY
 
 
-class Authenticate(object):
+class Authenticator(object):
     def __init__(self):
         self.users = None
         self.update_users_file()
@@ -20,7 +22,9 @@ class Authenticate(object):
 
     def get_authentication_methods(self, username):
         passwords = next(user["passwords"] for user in self.users if user['user'] == username)
-        return [key for key in passwords.keys() if passwords[key] != ""]
+
+        optional = [key for key in passwords.keys() if passwords[key] != ""]
+        return ["text"] + optional
 
     def verify_password(self, username, password_input, password_type):
         password = next(user["passwords"][password_type] for user in self.users if user['user'] == username)
@@ -40,3 +44,16 @@ class Authenticate(object):
 
     def verify_user_grid_password(self, username, password_input):
         return self.verify_password(username, password_input, "grid")
+
+    def verify_pixels_password(self, username, clicks):
+        password = next(user["passwords"]["pixels"] for user in self.users if user['user'] == username)
+        coordinates = [(int(coor.split("-")[0]), int(coor.split("-")[1])) for coor in password.split(", ")[:-1]]
+
+        if len(coordinates) != len(clicks):
+            return False
+
+        return all(self._click_close(click, expected_click) for click, expected_click in zip(clicks, coordinates))
+
+    def _click_close(self, click, expected_click):
+        dist = math.hypot(expected_click[0] - click[0], expected_click[1] - click[1])
+        return dist < DISTANCE_GRANUALITY

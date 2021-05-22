@@ -1,38 +1,30 @@
 from tkinter import StringVar, Toplevel, Label, Entry, Button, END, RAISED
-from PIL import Image, ImageTk
 
-GRID_PHOTO_PATH = r"assets\grid_photos"
-PIXEL_PHOTO_PATH = r"assets\pixels_photos"
+from Screens.AuthenticationScreens.grid_photos_screen import GridPhotosScreen
+from Screens.AuthenticationScreens.pixels_screen import PixelsScreen
+from Screens.AuthenticationScreens.text_screen import TextScreen
 
+login_success = True
 
 class Login(object):
-    def __init__(self, auth, main_screen):
+    def __init__(self, authenticator, main_screen):
         self.main_screen = main_screen
         self.login_screen = None
+
+        self.authenticator = authenticator
+
         self.user_not_found_screen = None
-        self.password_not_recog_screen = None
-        self.photo_grid_screen = None
-        self._pixels_screen = None
         self.login_success_screen = None
         self.username_login_entry = None
-        self.password_login_entry = None
 
         self.username = StringVar()
-        self.password = StringVar()
 
-        self.auth = auth
-
-        self.grid_password = ""
-
-    def pixels_click(self, coordinates):
-        print(coordinates.x, coordinates.y)
-
-    def login_user(self):
+    def login_window(self):
         self.login_screen = Toplevel(self.main_screen)
         self.login_screen.title("Login")
-        self.login_screen.geometry("300x250")
+        self.login_screen.geometry("200x150")
 
-        Label(self.login_screen, text="Please enter details below to login").pack()
+        Label(self.login_screen, text="Please enter your details").pack()
 
         Label(self.login_screen, text="").pack()
         Label(self.login_screen, text="Username * ").pack()
@@ -40,38 +32,30 @@ class Login(object):
         self.username_login_entry.pack()
 
         Label(self.login_screen, text="").pack()
-        Label(self.login_screen, text="Password * ").pack()
-        self.password_login_entry = Entry(self.login_screen, textvariable=self.password, show='*')
-        self.password_login_entry.pack()
+        Button(self.login_screen, text="Start authentication", width=20, height=1, command=self._start_auth).pack()
 
-        Label(self.login_screen, text="").pack()
-        Button(self.login_screen, text="Login", width=10, height=1, command=self._text_login_verify).pack()
-
-    def _text_login_verify(self):
+    def _start_auth(self):
         username = self.username.get()
-        password = self.password.get()
-        self.username_login_entry.delete(0, END)
-        self.password_login_entry.delete(0, END)
 
-        print(username)
-        print(password)
+        self.username_login_entry.delete(0, END)  # TODO: what for?
 
-        if not self.auth.check_user_exists(username):
+        if not self.authenticator.check_user_exists(username):
             self._user_not_found()
-        elif self.auth.verify_user_text_password(username, password):
-            auth_methods = self.auth.get_authentication_methods(username)
+            return
 
-            if "grid" in auth_methods:
-                self._grid_login(username)
-                self.login_screen.wait_window(self.photo_grid_screen)
+        auth_methods = self.authenticator.get_authentication_methods(username)
 
-            if "pixels" in auth_methods:
-                self._pixel_login(username)
-                self.login_screen.wait_window(self._pixels_screen)
+        authentication_classes = {"grid": GridPhotosScreen, "pixels": PixelsScreen, "text": TextScreen}
 
+        for auth_method in ["text", "grid", "pixels"]:  # TODO: move to const
+            if auth_method in auth_methods:
+                screen = authentication_classes[auth_method](self)
+                screen.create(username)
+
+                self.login_screen.wait_window(screen.screen)
+
+        if login_success:
             self._login_success()
-        else:
-            self._password_not_recognised()
 
     def _login_success(self):
         self.login_success_screen = Toplevel(self.login_screen)
@@ -79,63 +63,6 @@ class Login(object):
         self.login_success_screen.geometry("128x128")
         Label(self.login_success_screen, text="Login Success").pack()
         Button(self.login_success_screen, text="OK", command=self._delete_login_success).pack()
-
-    def _grid_login_verify(self, username):
-        if self.auth.verify_user_grid_password(username, self.grid_password):
-            self._delete_photo_grid_screen()
-        else:
-            self.grid_password = ""
-            self._password_not_recognised()
-
-    def _build_grid_password(self, i):
-        self.grid_password += str(i)
-
-    def _add_photo_button(self, photo_name, screen, row, column, i):
-        image = Image.open(GRID_PHOTO_PATH + "\\" + photo_name)
-        photo = ImageTk.PhotoImage(image)
-        label = Button(screen, command=lambda: self._build_grid_password(i), image=photo)
-
-        label.image = photo  # TODO: needed?
-        label.grid(row=row, column=column)
-
-    def _grid_login(self, username):
-        self.photo_grid_screen = Toplevel(self.login_screen)
-        self.photo_grid_screen.title("Photo grid")
-        self.photo_grid_screen.geometry("400x460")
-
-        self._add_photo_button("delicious.png", self.photo_grid_screen, 0, 0, 0)
-        self._add_photo_button("digg.png", self.photo_grid_screen, 0, 1, 1)
-        self._add_photo_button("furl.png", self.photo_grid_screen, 0, 2, 2)
-        self._add_photo_button("flickr.png", self.photo_grid_screen, 1, 0, 3)
-        self._add_photo_button("reddit.png", self.photo_grid_screen, 1, 1, 4)
-        self._add_photo_button("rss.png", self.photo_grid_screen, 1, 2, 5)
-        self._add_photo_button("stumbleupon.png", self.photo_grid_screen, 2, 0, 6)
-        self._add_photo_button("yahoo.png", self.photo_grid_screen, 2, 1, 7)
-        self._add_photo_button("youtube.png", self.photo_grid_screen, 2, 2, 8)
-
-        button = Button(self.photo_grid_screen, text="Login", width=10, height=1,
-                        command=lambda: self._grid_login_verify(username))
-        label = Label(self.photo_grid_screen, text="")
-        label.grid(row=3, column=1)
-        button.grid(row=4, column=1)
-
-    def _pixel_login(self, username):
-        self._pixels_screen = Toplevel(self.login_screen)
-        self._pixels_screen.title("Photo grid")
-        self._pixels_screen.geometry("750x500")
-
-        photo = ImageTk.PhotoImage(Image.open(PIXEL_PHOTO_PATH + "\\" + "switzerland.jpg"))
-        label = Button(self._pixels_screen, image=photo)
-        label.image = photo
-        label.bind("<Button-1>", self.pixels_click)
-        label.pack(fill="both", expand=1)
-
-    def _password_not_recognised(self):
-        self.password_not_recog_screen = Toplevel(self.login_screen)
-        self.password_not_recog_screen.title("Invalid password")
-        self.password_not_recog_screen.geometry("150x100")
-        Label(self.password_not_recog_screen, text="Invalid Password ").pack()
-        Button(self.password_not_recog_screen, text="OK", command=self._delete_password_not_recognised).pack()
 
     def _user_not_found(self):
         self.user_not_found_screen = Toplevel(self.login_screen)
@@ -146,15 +73,7 @@ class Login(object):
 
     def _delete_login_success(self):
         self.login_success_screen.destroy()
-        if self.photo_grid_screen is not None:
-            self.photo_grid_screen.destroy()
         self.login_screen.destroy()
-
-    def _delete_password_not_recognised(self):
-        self.password_not_recog_screen.destroy()
 
     def _delete_user_not_found_screen(self):
         self.user_not_found_screen.destroy()
-
-    def _delete_photo_grid_screen(self):
-        self.photo_grid_screen.destroy()
