@@ -54,6 +54,9 @@ class Login(object):
 
                 self.login_screen.wait_window(screen.screen)
 
+                if not login_success:
+                    return
+
         if login_success:
             self._login_success()
 
