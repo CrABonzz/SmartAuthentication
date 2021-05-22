@@ -1,0 +1,1 @@
+PIXEL_PHOTO_PATH = r"assets\pixels_photos"

@@ -5,7 +5,7 @@ from tkinter import StringVar, Toplevel, Label, Entry, Button, END, Checkbutton,
     DISABLED
 from PIL import Image, ImageTk
 
-from GUI.login import GRID_PHOTO_PATH
+from Screens.login import GRID_PHOTO_PATH
 from Utils.common import HASH_ITERATIONS_AMOUNT
 from Utils.general_utils import random_salt
 

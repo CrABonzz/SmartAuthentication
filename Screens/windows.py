@@ -1,8 +1,8 @@
 from tkinter import *
 
 from Authentication.authenticate import Authenticate
-from GUI.login import Login
-from GUI.register import Register
+from Screens.login import Login
+from Screens.register import Register
 
 
 class MainPage(object):

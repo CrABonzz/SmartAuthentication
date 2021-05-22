@@ -1,0 +1,1 @@
+GRID_PHOTO_PATH = r"assets\grid_photos"

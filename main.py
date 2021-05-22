@@ -1,4 +1,4 @@
-from GUI.windows import MainPage
+from Screens.windows import MainPage
 
 
 def main():
