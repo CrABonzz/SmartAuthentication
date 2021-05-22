@@ -1,7 +1,8 @@
-from tkinter import StringVar, Toplevel, Label, Entry, Button, END
+from tkinter import StringVar, Toplevel, Label, Entry, Button, END, RAISED
 from PIL import Image, ImageTk
 
 GRID_PHOTO_PATH = r"assets\grid_photos"
+PIXEL_PHOTO_PATH = r"assets\pixels_photos"
 
 
 class Login(object):
@@ -11,6 +12,7 @@ class Login(object):
         self.user_not_found_screen = None
         self.password_not_recog_screen = None
         self.photo_grid_screen = None
+        self._pixels_screen = None
         self.login_success_screen = None
         self.username_login_entry = None
         self.password_login_entry = None
@@ -21,6 +23,9 @@ class Login(object):
         self.auth = auth
 
         self.grid_password = ""
+
+    def pixels_click(self, coordinates):
+        print(coordinates.x, coordinates.y)
 
     def login_user(self):
         self.login_screen = Toplevel(self.main_screen)
@@ -60,6 +65,10 @@ class Login(object):
                 self._grid_login(username)
                 self.login_screen.wait_window(self.photo_grid_screen)
 
+            if "pixels" in auth_methods:
+                self._pixel_login(username)
+                self.login_screen.wait_window(self._pixels_screen)
+
             self._login_success()
         else:
             self._password_not_recognised()
@@ -85,7 +94,8 @@ class Login(object):
         image = Image.open(GRID_PHOTO_PATH + "\\" + photo_name)
         photo = ImageTk.PhotoImage(image)
         label = Button(screen, command=lambda: self._build_grid_password(i), image=photo)
-        label.image = photo
+
+        label.image = photo  # TODO: needed?
         label.grid(row=row, column=column)
 
     def _grid_login(self, username):
@@ -108,6 +118,17 @@ class Login(object):
         label = Label(self.photo_grid_screen, text="")
         label.grid(row=3, column=1)
         button.grid(row=4, column=1)
+
+    def _pixel_login(self, username):
+        self._pixels_screen = Toplevel(self.login_screen)
+        self._pixels_screen.title("Photo grid")
+        self._pixels_screen.geometry("750x500")
+
+        photo = ImageTk.PhotoImage(Image.open(PIXEL_PHOTO_PATH + "\\" + "switzerland.jpg"))
+        label = Button(self._pixels_screen, image=photo)
+        label.image = photo
+        label.bind("<Button-1>", self.pixels_click)
+        label.pack(fill="both", expand=1)
 
     def _password_not_recognised(self):
         self.password_not_recog_screen = Toplevel(self.login_screen)
