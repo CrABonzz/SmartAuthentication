@@ -38,6 +38,7 @@ class PixelsScreen(IAuthScreen):
             self._delete_pixels_screen()
         else:
             login.login_success = False
+            self._clicks = []
             self._password_not_recognised()
 
     def _pixels_click(self, coordinates):

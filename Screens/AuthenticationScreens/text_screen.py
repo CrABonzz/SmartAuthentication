@@ -28,7 +28,7 @@ class TextScreen(IAuthScreen):
         self._password_login_entry.pack()
 
         Label(self.text_screen, text="").pack()
-        Button(self.text_screen, text="Enter", width=20, height=1, command=lambda: self._verify(username)).pack()
+        Button(self.text_screen, text="Finished", width=20, height=1, command=lambda: self._verify(username)).pack()
 
     def _verify(self, username):
         password = self._password.get()

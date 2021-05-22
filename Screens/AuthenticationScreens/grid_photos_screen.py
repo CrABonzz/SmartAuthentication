@@ -13,6 +13,9 @@ class GridPhotosScreen(IAuthScreen):
 
         self.photo_grid_screen = None
         self.grid_password = ""
+        self._finished_button_text = StringVar()
+        self._number_of_clikcs = 0
+        self._finished_button_text.set("Finished (0 Clicks)")
 
     @property
     def screen(self):
@@ -33,7 +36,7 @@ class GridPhotosScreen(IAuthScreen):
         self._add_photo_button("yahoo.png", self.photo_grid_screen, 2, 1, 7)
         self._add_photo_button("youtube.png", self.photo_grid_screen, 2, 2, 8)
 
-        button = Button(self.photo_grid_screen, text="Finished", width=10, height=1,
+        button = Button(self.photo_grid_screen, textvariable=self._finished_button_text, width=15, height=1,
                         command=lambda: self._verify(username))
         label = Label(self.photo_grid_screen, text="")
         label.grid(row=3, column=1)
@@ -57,6 +60,8 @@ class GridPhotosScreen(IAuthScreen):
 
     def _build_grid_password(self, i):
         self.grid_password += str(i)
+        self._number_of_clikcs += 1
+        self._finished_button_text.set("Finished (" + str(self._number_of_clikcs) + " Clicks)")
 
     def _delete_photo_grid_screen(self):
         self.photo_grid_screen.destroy()
