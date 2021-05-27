@@ -18,10 +18,9 @@ class IAuthScreen(object, metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def create(self, username):
+    def create(self, username, email):
         pass
 
-    # TODO: call it when needed
     def _password_not_recognised(self):
         self.password_not_recog_screen = Toplevel(self.login_screen)
         self.password_not_recog_screen.title("Invalid password")
@@ -29,3 +28,7 @@ class IAuthScreen(object, metaclass=ABCMeta):
         Label(self.password_not_recog_screen, text="Invalid Password ").pack()
         Button(self.password_not_recog_screen, text="OK",
                command=lambda: destroy_screens(self.password_not_recog_screen)).pack()
+
+    def _notify_user_mail(self, username, email):
+        # TODO: not every failed. but once in 5 failures...?
+        

@@ -3,7 +3,7 @@ from tkinter import StringVar, Label, Entry, Button, END
 from Screens.AuthenticationScreens.grid_photos_screen import GridPhotosScreen
 from Screens.AuthenticationScreens.pixels_screen import PixelsScreen
 from Screens.AuthenticationScreens.text_screen import TextScreen
-from Utils.tkinter_utils import add_screen, destroy_screens
+from Utils.tkinter_utils import add_screen, destroy_screens, add_entry
 
 login_success = True
 
@@ -18,8 +18,10 @@ class Login(object):
         self.user_not_found_screen = None
         self.login_success_screen = None
         self.username_login_entry = None
+        self.email_login_entry = None
 
         self.username = StringVar()
+        self.email = StringVar()
 
     def login_window(self):
         self.login_screen = add_screen(self.main_screen, "Login", "200x150")
@@ -27,19 +29,22 @@ class Login(object):
         Label(self.login_screen, text="Please enter your details").pack()
 
         Label(self.login_screen, text="").pack()
-        Label(self.login_screen, text="Username * ").pack()
-        self.username_login_entry = Entry(self.login_screen, textvariable=self.username)
-        self.username_login_entry.pack()
+
+        self.username_login_entry = add_entry(self.login_screen, "Username", self.username)
+        self.email_login_entry = add_entry(self.login_screen, "Email", self.email)
+
 
         Label(self.login_screen, text="").pack()
         Button(self.login_screen, text="Start authentication", width=20, height=1, command=self._start_auth).pack()
 
     def _start_auth(self):
         username = self.username.get()
+        email = self.email.get()
 
-        self.username_login_entry.delete(0, END)  # TODO: what for?
+        self.username_login_entry.delete(0, END)  # TODO: where?
+        self.email_login_entry.delete(0, END)  # TODO: where?
 
-        if not self.authenticator.check_user_exists(username):
+        if not self.authenticator.check_user_exists(username, email):
             self._user_not_found()
             return
 
@@ -50,7 +55,7 @@ class Login(object):
         for auth_method in ["text", "grid", "pixels"]:  # TODO: move to const
             if auth_method in auth_methods:
                 screen = authentication_classes[auth_method](self)
-                screen.create(username)
+                screen.create(username, email)
 
                 self.login_screen.wait_window(screen.screen)
 

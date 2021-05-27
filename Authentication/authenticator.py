@@ -17,8 +17,8 @@ class Authenticator(object):
             all_users = json.load(users_file)
             self.users = all_users["users"]
 
-    def check_user_exists(self, username):
-        return any(True for user in self.users if user['user'] == username)
+    def check_user_exists(self, username, email):
+        return any(True for user in self.users if user['user'] == username and user['email'] == email)
 
     def get_authentication_methods(self, username):
         passwords = next(user["passwords"] for user in self.users if user['user'] == username)

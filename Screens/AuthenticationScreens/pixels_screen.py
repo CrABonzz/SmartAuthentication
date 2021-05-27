@@ -20,7 +20,7 @@ class PixelsScreen(IAuthScreen):
     def screen(self):
         return self.pixels_screen
 
-    def create(self, username):
+    def create(self, username, email):
         self.pixels_screen = Toplevel(self.login_screen)
         self.pixels_screen.title("Pixels")
         self.pixels_screen.geometry("750x550")
@@ -32,15 +32,16 @@ class PixelsScreen(IAuthScreen):
         label.pack(side=TOP)
 
         button = Button(self.pixels_screen, text="Finished", width=10, height=1,
-                        command=lambda: self._verify(username))
+                        command=lambda: self._verify(username, email))
         button.pack()
 
-    def _verify(self, username):
+    def _verify(self, username, email):
         if self.authenticator.verify_pixels_password(username, self._clicks):
             destroy_screens(self.pixels_screen)
         else:
             login.login_success = False
             self._clicks = []
+            self._notify_user_mail(username, email)
             self._password_not_recognised()
 
     def _pixels_click(self, coordinates):
