@@ -3,6 +3,8 @@ from Screens.AuthenticationScreens.authentication_screen import IAuthScreen
 from tkinter import StringVar, Toplevel, Label, Entry, Button, END, RAISED, BOTTOM, TOP
 from PIL import Image, ImageTk
 
+from Utils.tkinter_utils import destroy_screens
+
 PIXEL_PHOTO_PATH = r"assets\pixels_photos"
 
 
@@ -35,7 +37,7 @@ class PixelsScreen(IAuthScreen):
 
     def _verify(self, username):
         if self.authenticator.verify_pixels_password(username, self._clicks):
-            self._delete_pixels_screen()
+            destroy_screens(self.pixels_screen)
         else:
             login.login_success = False
             self._clicks = []
@@ -43,6 +45,3 @@ class PixelsScreen(IAuthScreen):
 
     def _pixels_click(self, coordinates):
         self._clicks += [(coordinates.x, coordinates.y)]
-
-    def _delete_pixels_screen(self):
-        self.pixels_screen.destroy()

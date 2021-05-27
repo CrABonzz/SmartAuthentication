@@ -1,14 +1,16 @@
 import binascii
 import hashlib
 import json
-from tkinter import StringVar, Toplevel, Label, Entry, Button, END, Checkbutton, LEFT, BOTTOM, W, BooleanVar, S, \
+from tkinter import StringVar, Label, Entry, Button, END, Checkbutton, LEFT, BOTTOM, W, BooleanVar, S, \
     DISABLED, TOP
+
 from PIL import Image, ImageTk
 
 from Screens.AuthenticationScreens.grid_photos_screen import GRID_PHOTO_PATH
 from Screens.AuthenticationScreens.pixels_screen import PIXEL_PHOTO_PATH
 from Utils.common import HASH_ITERATIONS_AMOUNT
 from Utils.general_utils import random_salt
+from Utils.tkinter_utils import add_entry, add_screen, destroy_screens
 
 
 class Register(object):
@@ -18,8 +20,10 @@ class Register(object):
         self.register_screen = None
 
         self.username = StringVar()
+        self.email = StringVar()
         self.text_password = StringVar()
         self.username_entry = None
+        self.email_entry = None
         self.text_password_entry = None
         self.photo_grid_screen = None
         self.pixels_screen = None
@@ -27,21 +31,15 @@ class Register(object):
         self.grid_password = ""  # TODO: store hidden
         self._clicks = ""
 
-
     # TODO: rename method
     def register_user(self):
-        self.register_screen = Toplevel(self.main_screen)
-        self.register_screen.title("Register")
-        self.register_screen.geometry("300x250")
+        self.register_screen = add_screen(self.main_screen, "Register", "300x250")
 
         Label(self.register_screen, text="Please enter details below", bg="blue").pack()
         Label(self.register_screen, text="").pack()
 
-        username_label = Label(self.register_screen, text="Username * ")
-        username_label.pack()
-
-        self.username_entry = Entry(self.register_screen, textvariable=self.username)
-        self.username_entry.pack()
+        self.username_entry = add_entry(self.register_screen, "Username", self.username)
+        self.email_entry = add_entry(self.register_screen, "Email", self.email)
 
         password_label = Label(self.register_screen, text="Password * ")
         password_label.pack()
@@ -88,10 +86,9 @@ class Register(object):
         label.grid(row=row, column=column)
 
     def _create_grid_password(self):
-        self.photo_grid_screen = Toplevel(self.register_screen)
-        self.photo_grid_screen.title("Photo grid")
-        self.photo_grid_screen.geometry("400x460")
+        self.photo_grid_screen = add_screen(self.register_screen, "Photo grid", "400x460")
 
+        # TODO: add more photos and ids
         self._add_photo_button("delicious.png", self.photo_grid_screen, 0, 0, 0)
         self._add_photo_button("digg.png", self.photo_grid_screen, 0, 1, 1)
         self._add_photo_button("furl.png", self.photo_grid_screen, 0, 2, 2)
@@ -102,16 +99,15 @@ class Register(object):
         self._add_photo_button("yahoo.png", self.photo_grid_screen, 2, 1, 7)
         self._add_photo_button("youtube.png", self.photo_grid_screen, 2, 2, 8)
 
-        button = Button(self.photo_grid_screen, text="Finish", command=self._delete_grid_registering, width=10,
+        button = Button(self.photo_grid_screen, text="Finish", command=lambda: destroy_screens(self.photo_grid_screen),
+                        width=10,
                         height=1)
         label = Label(self.photo_grid_screen, text="")
         label.grid(row=3, column=1)
         button.grid(row=4, column=1)
 
     def _create_pixels_password(self):
-        self.pixels_screen = Toplevel(self.register_screen)
-        self.pixels_screen.title("Photo grid")
-        self.pixels_screen.geometry("750x550")
+        self.pixels_screen = add_screen(self.register_screen, "Pixels", "750x550")
 
         photo = ImageTk.PhotoImage(Image.open(PIXEL_PHOTO_PATH + "\\" + "switzerland.jpg"))
         label = Button(self.pixels_screen, image=photo)
@@ -120,7 +116,7 @@ class Register(object):
         label.pack(side=TOP)
 
         button = Button(self.pixels_screen, text="Finished", width=10, height=1,
-                        command=self._delete_pixels_registering)
+                        command=lambda: destroy_screens(self.pixels_screen))
         button.pack()
 
     def _pixels_click(self, coordinates):
@@ -141,10 +137,9 @@ class Register(object):
         else:
             pixels_password = ""
 
-        username = self.username.get()
-
         new_user = {
-            "user": username,
+            "user": self.username.get(),
+            "email": self.email.get(),
             "passwords": {
                 "text": self._hash_password(self.text_password.get()).decode('ascii'),
                 "grid": grid_password,
@@ -160,26 +155,15 @@ class Register(object):
             users_file.truncate()
             json.dump(all_users, users_file)
 
-        # self.username_entry.delete(0, END)    # TODO: needed?
-        # self.text_password_entry.delete(0, END)
+        self.username_entry.delete(0, END)  # TODO: needed?
 
         self._register_success()
 
     def _register_success(self):
         self.auth.update_users_file()
 
-        self.register_success_screen = Toplevel()
-        self.register_success_screen.title("Success")
-        self.register_success_screen.geometry("128x128")
+        self.register_success_screen = add_screen(self.main_screen, "Success", "128x128")
+
         Label(self.register_success_screen, text="Register Success").pack()
-        Button(self.register_success_screen, text="OK", command=self._delete_register_registering).pack()
-
-    def _delete_grid_registering(self):
-        self.photo_grid_screen.destroy()
-
-    def _delete_pixels_registering(self):
-        self.pixels_screen.destroy()
-
-    def _delete_register_registering(self):
-        self.register_screen.destroy()
-        self.register_success_screen.destroy()
+        Button(self.register_success_screen, text="OK",
+               command=lambda: destroy_screens(self.register_screen, self.register_success_screen)).pack()

@@ -1,10 +1,12 @@
-from tkinter import StringVar, Toplevel, Label, Entry, Button, END, RAISED
+from tkinter import StringVar, Label, Entry, Button, END
 
 from Screens.AuthenticationScreens.grid_photos_screen import GridPhotosScreen
 from Screens.AuthenticationScreens.pixels_screen import PixelsScreen
 from Screens.AuthenticationScreens.text_screen import TextScreen
+from Utils.tkinter_utils import add_screen, destroy_screens
 
 login_success = True
+
 
 class Login(object):
     def __init__(self, authenticator, main_screen):
@@ -20,9 +22,7 @@ class Login(object):
         self.username = StringVar()
 
     def login_window(self):
-        self.login_screen = Toplevel(self.main_screen)
-        self.login_screen.title("Login")
-        self.login_screen.geometry("200x150")
+        self.login_screen = add_screen(self.main_screen, "Login", "200x150")
 
         Label(self.login_screen, text="Please enter your details").pack()
 
@@ -61,22 +61,15 @@ class Login(object):
             self._login_success()
 
     def _login_success(self):
-        self.login_success_screen = Toplevel(self.login_screen)
-        self.login_success_screen.title("Success")
-        self.login_success_screen.geometry("128x128")
+        self.login_success_screen = add_screen(self.login_screen, "Success", "128x128")
+
         Label(self.login_success_screen, text="Login Success").pack()
-        Button(self.login_success_screen, text="OK", command=self._delete_login_success).pack()
+        Button(self.login_success_screen, text="OK",
+               command=lambda: destroy_screens(self.login_success_screen, self.login_screen)).pack()
 
     def _user_not_found(self):
-        self.user_not_found_screen = Toplevel(self.login_screen)
-        self.user_not_found_screen.title("Success")
-        self.user_not_found_screen.geometry("150x100")
+        self.user_not_found_screen = add_screen(self.login_screen, "User not found", "150x100")
+
         Label(self.user_not_found_screen, text="User Not Found").pack()
-        Button(self.user_not_found_screen, text="OK", command=self._delete_user_not_found_screen).pack()
-
-    def _delete_login_success(self):
-        self.login_success_screen.destroy()
-        self.login_screen.destroy()
-
-    def _delete_user_not_found_screen(self):
-        self.user_not_found_screen.destroy()
+        Button(self.user_not_found_screen, text="OK",
+               command=lambda: destroy_screens(self.user_not_found_screen)).pack()

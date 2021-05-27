@@ -3,6 +3,7 @@ from PIL import Image, ImageTk
 
 from Screens import login
 from Screens.AuthenticationScreens.authentication_screen import IAuthScreen
+from Utils.tkinter_utils import destroy_screens
 
 GRID_PHOTO_PATH = r"assets\grid_photos"
 
@@ -44,7 +45,7 @@ class GridPhotosScreen(IAuthScreen):
 
     def _verify(self, username):
         if self.authenticator.verify_user_grid_password(username, self.grid_password):
-            self._delete_photo_grid_screen()
+            destroy_screens(self.photo_grid_screen)
         else:
             self.grid_password = ""
             login.login_success = False
@@ -62,6 +63,3 @@ class GridPhotosScreen(IAuthScreen):
         self.grid_password += str(i)
         self._number_of_clikcs += 1
         self._finished_button_text.set("Finished (" + str(self._number_of_clikcs) + " Clicks)")
-
-    def _delete_photo_grid_screen(self):
-        self.photo_grid_screen.destroy()

@@ -1,6 +1,8 @@
 from abc import ABCMeta, abstractmethod
 from tkinter import StringVar, Toplevel, Label, Entry, Button, END, RAISED
 
+from Utils.tkinter_utils import destroy_screens
+
 
 class IAuthScreen(object, metaclass=ABCMeta):
     @abstractmethod
@@ -25,7 +27,5 @@ class IAuthScreen(object, metaclass=ABCMeta):
         self.password_not_recog_screen.title("Invalid password")
         self.password_not_recog_screen.geometry("150x100")
         Label(self.password_not_recog_screen, text="Invalid Password ").pack()
-        Button(self.password_not_recog_screen, text="OK", command=self._delete_password_not_recognised).pack()
-
-    def _delete_password_not_recognised(self):
-        self.password_not_recog_screen.destroy()
+        Button(self.password_not_recog_screen, text="OK",
+               command=lambda: destroy_screens(self.password_not_recog_screen)).pack()

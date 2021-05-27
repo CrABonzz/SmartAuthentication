@@ -2,6 +2,7 @@ from tkinter import Label, Entry, Toplevel, END, StringVar, Button
 
 from Screens import login
 from Screens.AuthenticationScreens.authentication_screen import IAuthScreen
+from Utils.tkinter_utils import destroy_screens
 
 
 class TextScreen(IAuthScreen):
@@ -35,10 +36,7 @@ class TextScreen(IAuthScreen):
         self._password_login_entry.delete(0, END)
 
         if self.authenticator.verify_user_text_password(username, password):
-            self._delete_text_screen()
+            destroy_screens(self.text_screen)
         else:
             login.login_success = False
             self._password_not_recognised()
-
-    def _delete_text_screen(self):
-        self.text_screen.destroy()
