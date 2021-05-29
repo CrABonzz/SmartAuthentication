@@ -4,6 +4,7 @@ from tkinter import StringVar, Label, Entry, Button, END, Checkbutton, LEFT, BOT
     DISABLED, TOP
 
 from PIL import Image, ImageTk
+from validate_email import validate_email
 
 from Screens.AuthenticationScreens.grid_photos_screen import GRID_PHOTO_PATH
 from Screens.AuthenticationScreens.pixels_screen import PIXEL_PHOTO_PATH
@@ -160,6 +161,10 @@ class Register(object):
             # info_screen(self.register_screen, "Password isn't strong", "300x200", password_mismatch)
             # return False
             pass
+
+        if not validate_email(email):
+            info_screen(self.register_screen, "Email isn't valid", "200x100")
+            return False
 
         if self.auth.check_user_or_email_exists(username, email):
             info_screen(self.register_screen, "User already exists", "300x200",
