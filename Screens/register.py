@@ -127,7 +127,7 @@ class Register(object):
         password_mismatch = self.auth.password_strong(text_password)
 
         if password_mismatch != "":
-            info_screen(self.register_screen, "Password isn't strong", "300x300", password_mismatch)
+            info_screen(self.register_screen, "Password isn't strong", "300x200", password_mismatch)
             return
 
         if grid_auth.get():
