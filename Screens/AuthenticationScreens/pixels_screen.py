@@ -37,6 +37,7 @@ class PixelsScreen(IAuthScreen):
 
     def _verify(self, username, email):
         if self.authenticator.verify_pixels_password(username, self._clicks):
+            login.login_success = True
             destroy_screens(self.pixels_screen)
         else:
             self._clicks = []

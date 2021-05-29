@@ -1,4 +1,5 @@
-from tkinter import StringVar, Toplevel, Label, Entry, Button, END, RAISED, Image
+from tkinter import StringVar, Toplevel, Label, Button, Image
+
 from PIL import Image, ImageTk
 
 from Screens import login
@@ -45,9 +46,11 @@ class GridPhotosScreen(IAuthScreen):
 
     def _verify(self, username, email):
         if self.authenticator.verify_user_grid_password(username, self.grid_password):
+            login.login_success = True
             destroy_screens(self.photo_grid_screen)
         else:
             self.grid_password = ""
+            self._number_of_clikcs = 0
             self._login_failed(username, email)
 
     def _add_photo_button(self, photo_name, screen, row, column, i):

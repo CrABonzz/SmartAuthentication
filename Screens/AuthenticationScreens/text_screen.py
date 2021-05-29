@@ -37,6 +37,7 @@ class TextScreen(IAuthScreen):
         self._password_login_entry.delete(0, END)
 
         if self.authenticator.verify_user_text_password(username, password):
+            login.login_success = True
             destroy_screens(self.text_screen)
         else:
             self._login_failed(username, email)
