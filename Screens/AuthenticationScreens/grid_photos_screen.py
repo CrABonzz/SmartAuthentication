@@ -48,9 +48,7 @@ class GridPhotosScreen(IAuthScreen):
             destroy_screens(self.photo_grid_screen)
         else:
             self.grid_password = ""
-            login.login_success = False
-            self._notify_user_mail(username, email)
-            self._password_not_recognised()
+            self._login_failed(username, email)
 
     def _add_photo_button(self, photo_name, screen, row, column, i):
         image = Image.open(GRID_PHOTO_PATH + "\\" + photo_name)

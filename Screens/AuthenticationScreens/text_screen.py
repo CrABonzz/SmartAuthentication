@@ -29,7 +29,8 @@ class TextScreen(IAuthScreen):
         self._password_login_entry.pack()
 
         Label(self.text_screen, text="").pack()
-        Button(self.text_screen, text="Finished", width=20, height=1, command=lambda: self._verify(username, email)).pack()
+        Button(self.text_screen, text="Finished", width=20, height=1,
+               command=lambda: self._verify(username, email)).pack()
 
     def _verify(self, username, email):
         password = self._password.get()
@@ -38,6 +39,4 @@ class TextScreen(IAuthScreen):
         if self.authenticator.verify_user_text_password(username, password):
             destroy_screens(self.text_screen)
         else:
-            login.login_success = False
-            self._notify_user_mail(username, email)
-            self._password_not_recognised()
+            self._login_failed(username, email)

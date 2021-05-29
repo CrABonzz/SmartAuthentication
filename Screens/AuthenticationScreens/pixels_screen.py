@@ -39,10 +39,8 @@ class PixelsScreen(IAuthScreen):
         if self.authenticator.verify_pixels_password(username, self._clicks):
             destroy_screens(self.pixels_screen)
         else:
-            login.login_success = False
             self._clicks = []
-            self._notify_user_mail(username, email)
-            self._password_not_recognised()
+            self._login_failed(username, email)
 
     def _pixels_click(self, coordinates):
         self._clicks += [(coordinates.x, coordinates.y)]

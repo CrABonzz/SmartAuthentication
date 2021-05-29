@@ -1,6 +1,5 @@
 import binascii
 import hashlib
-import json
 from tkinter import StringVar, Label, Entry, Button, END, Checkbutton, LEFT, BOTTOM, W, BooleanVar, S, \
     DISABLED, TOP
 
@@ -10,6 +9,7 @@ from Screens.AuthenticationScreens.grid_photos_screen import GRID_PHOTO_PATH
 from Screens.AuthenticationScreens.pixels_screen import PIXEL_PHOTO_PATH
 from Utils.common import HASH_ITERATIONS_AMOUNT
 from Utils.general_utils import random_salt
+from Utils.json_utils import add_new_user
 from Utils.tkinter_utils import add_entry, add_screen, destroy_screens
 
 
@@ -140,6 +140,8 @@ class Register(object):
         new_user = {
             "user": self.username.get(),
             "email": self.email.get(),
+            "count_failed_tries": 0,
+            "blocked": False,
             "passwords": {
                 "text": self._hash_password(self.text_password.get()).decode('ascii'),
                 "grid": grid_password,
@@ -147,13 +149,7 @@ class Register(object):
             }
         }
 
-        with open(r"assets\users.json", "r+") as users_file:
-            all_users = json.load(users_file)
-            all_users["users"].append(new_user)
-
-            users_file.seek(0)
-            users_file.truncate()
-            json.dump(all_users, users_file)
+        add_new_user(new_user)
 
         self.username_entry.delete(0, END)  # TODO: needed?
 

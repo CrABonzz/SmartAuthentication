@@ -3,7 +3,7 @@ from tkinter import StringVar, Label, Entry, Button, END
 from Screens.AuthenticationScreens.grid_photos_screen import GridPhotosScreen
 from Screens.AuthenticationScreens.pixels_screen import PixelsScreen
 from Screens.AuthenticationScreens.text_screen import TextScreen
-from Utils.tkinter_utils import add_screen, destroy_screens, add_entry
+from Utils.tkinter_utils import add_screen, destroy_screens, add_entry, info_screen
 
 login_success = True
 
@@ -24,7 +24,7 @@ class Login(object):
         self.email = StringVar()
 
     def login_window(self):
-        self.login_screen = add_screen(self.main_screen, "Login", "200x150")
+        self.login_screen = add_screen(self.main_screen, "Login", "200x200")
 
         Label(self.login_screen, text="Please enter your details").pack()
 
@@ -32,7 +32,6 @@ class Login(object):
 
         self.username_login_entry = add_entry(self.login_screen, "Username", self.username)
         self.email_login_entry = add_entry(self.login_screen, "Email", self.email)
-
 
         Label(self.login_screen, text="").pack()
         Button(self.login_screen, text="Start authentication", width=20, height=1, command=self._start_auth).pack()
@@ -44,8 +43,13 @@ class Login(object):
         self.username_login_entry.delete(0, END)  # TODO: where?
         self.email_login_entry.delete(0, END)  # TODO: where?
 
-        if not self.authenticator.check_user_exists(username, email):
-            self._user_not_found()
+        user_exists, user_blocked = self.authenticator.check_user_exists(username, email)
+        if not user_exists:
+            info_screen(self.login_screen, "User not found", "150x100")
+            return
+
+        if user_blocked:
+            info_screen(self.login_screen, "User is temporary blocked", "150x100")
             return
 
         auth_methods = self.authenticator.get_authentication_methods(username)
@@ -71,10 +75,3 @@ class Login(object):
         Label(self.login_success_screen, text="Login Success").pack()
         Button(self.login_success_screen, text="OK",
                command=lambda: destroy_screens(self.login_success_screen, self.login_screen)).pack()
-
-    def _user_not_found(self):
-        self.user_not_found_screen = add_screen(self.login_screen, "User not found", "150x100")
-
-        Label(self.user_not_found_screen, text="User Not Found").pack()
-        Button(self.user_not_found_screen, text="OK",
-               command=lambda: destroy_screens(self.user_not_found_screen)).pack()
