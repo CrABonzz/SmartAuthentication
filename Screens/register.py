@@ -10,7 +10,7 @@ from Screens.AuthenticationScreens.pixels_screen import PIXEL_PHOTO_PATH
 from Utils.common import HASH_ITERATIONS_AMOUNT
 from Utils.general_utils import random_salt
 from Utils.json_utils import add_new_user
-from Utils.tkinter_utils import add_entry, add_screen, destroy_screens
+from Utils.tkinter_utils import add_entry, add_screen, destroy_screens, info_screen
 
 
 class Register(object):
@@ -123,6 +123,13 @@ class Register(object):
         self._clicks += str(coordinates.x) + "-" + str(coordinates.y) + ", "
 
     def _register_user(self, grid_auth, pixels_auth):
+        text_password = self.text_password.get()
+        password_mismatch = self.auth.password_strong(text_password)
+
+        if password_mismatch != "":
+            info_screen(self.register_screen, "Password isn't strong", "300x300", password_mismatch)
+            return
+
         if grid_auth.get():
             self._create_grid_password()
             self.register_screen.wait_window(self.photo_grid_screen)
@@ -143,23 +150,14 @@ class Register(object):
             "count_failed_tries": 0,
             "blocked": False,
             "passwords": {
-                "text": self._hash_password(self.text_password.get()).decode('ascii'),
+                "text": self._hash_password(text_password).decode('ascii'),
                 "grid": grid_password,
                 "pixels": pixels_password
             }
         }
 
         add_new_user(new_user)
-
         self.username_entry.delete(0, END)  # TODO: needed?
 
-        self._register_success()
-
-    def _register_success(self):
         self.auth.update_users_file()
-
-        self.register_success_screen = add_screen(self.main_screen, "Success", "128x128")
-
-        Label(self.register_success_screen, text="Register Success").pack()
-        Button(self.register_success_screen, text="OK",
-               command=lambda: destroy_screens(self.register_screen, self.register_success_screen)).pack()
+        info_screen(self.register_screen, "Register success", "128x100")

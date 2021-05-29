@@ -24,10 +24,12 @@ def destroy_screens(*screens):
         screen.destroy()
 
 
-def info_screen(top_screen, title, size):
+def info_screen(top_screen, title, size, label_text=None):
     screen = add_screen(top_screen, title, size)
 
-    Label(screen, text=title).pack()
+    if label_text is None:
+        label_text = title
+    Label(screen, text=label_text).pack()
     Button(screen, text="Okay", command=lambda: destroy_screens(screen)).pack()
 
     return screen

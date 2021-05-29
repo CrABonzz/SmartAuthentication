@@ -3,8 +3,10 @@ import hashlib
 import json
 
 import math
+import re
 
-from Utils.common import HASH_ITERATIONS_AMOUNT, HASH_RESULT_SIZE, DISTANCE_GRANUALITY
+from Utils.common import HASH_ITERATIONS_AMOUNT, HASH_RESULT_SIZE, DISTANCE_GRANUALITY, DIGIT_REGEX, SYMBOL_REGEX, \
+    LOWERCASE_REGEX, UPPERCASE_REGEX
 
 
 class Authenticator(object):
@@ -58,3 +60,25 @@ class Authenticator(object):
     def _click_close(self, click, expected_click):
         dist = math.hypot(expected_click[0] - click[0], expected_click[1] - click[1])
         return dist < DISTANCE_GRANUALITY
+
+    def password_strong(self, password):
+        """
+        Verify the strength of 'password'
+        Returns a dict indicating the wrong criteria
+        A password is considered strong if:
+            6 characters length or more
+            1 digit or more
+            1 symbol or more
+            1 uppercase letter or more
+            1 lowercase letter or more
+        """
+
+        error_messages = [error_message for regex, error_message in
+                          [DIGIT_REGEX, UPPERCASE_REGEX, LOWERCASE_REGEX, SYMBOL_REGEX] if re.search(regex,
+                                                                                                     password) is None]
+
+        password_error_message = "\n".join(error_messages)
+        if len(password) < 6:
+            password_error_message += "\nPassword length should be above 6.\n"
+
+        return password_error_message
