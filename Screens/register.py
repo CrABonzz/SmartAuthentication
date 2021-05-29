@@ -123,13 +123,52 @@ class Register(object):
         self._clicks += str(coordinates.x) + "-" + str(coordinates.y) + ", "
 
     def _register_user(self, grid_auth, pixels_auth):
+        username = self.username.get()
+        email = self.email.get()
         text_password = self.text_password.get()
-        password_mismatch = self.auth.password_strong(text_password)
 
-        if password_mismatch != "":
-            info_screen(self.register_screen, "Password isn't strong", "300x200", password_mismatch)
+        if not self._check_fields_validaty(username, email, text_password):
             return
 
+        grid_password, pixels_password = self._get_graphical_authentications(grid_auth, pixels_auth)
+
+        new_user = {
+            "user": username,
+            "email": email,
+            "count_failed_tries": 0,
+            "blocked": False,
+            "passwords": {
+                "text": self._hash_password(text_password).decode('ascii'),
+                "grid": grid_password,
+                "pixels": pixels_password
+            }
+        }
+
+        add_new_user(new_user)
+        self.username_entry.delete(0, END)
+        self.text_password_entry.delete(0, END)
+        self.email_entry.delete(0, END)
+
+        self.auth.update_users_file()
+        info_screen(self.register_screen, "Register success", "128x100")
+
+    def _check_fields_validaty(self, username, email, password):
+        password_mismatch = self.auth.password_strong(password)
+
+        if password_mismatch != "":
+            # TODO: undo in production
+            # info_screen(self.register_screen, "Password isn't strong", "300x200", password_mismatch)
+            # return False
+            pass
+
+        if self.auth.check_user_or_email_exists(username, email):
+            info_screen(self.register_screen, "User already exists", "300x200",
+                        "User with this username or email already exists")
+            return False
+
+        return True
+
+    def _get_graphical_authentications(self, grid_auth, pixels_auth):
         if grid_auth.get():
             self._create_grid_password()
             self.register_screen.wait_window(self.photo_grid_screen)
@@ -144,20 +183,4 @@ class Register(object):
         else:
             pixels_password = ""
 
-        new_user = {
-            "user": self.username.get(),
-            "email": self.email.get(),
-            "count_failed_tries": 0,
-            "blocked": False,
-            "passwords": {
-                "text": self._hash_password(text_password).decode('ascii'),
-                "grid": grid_password,
-                "pixels": pixels_password
-            }
-        }
-
-        add_new_user(new_user)
-        self.username_entry.delete(0, END)  # TODO: needed?
-
-        self.auth.update_users_file()
-        info_screen(self.register_screen, "Register success", "128x100")
+        return grid_password, pixels_password

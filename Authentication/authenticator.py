@@ -23,6 +23,10 @@ class Authenticator(object):
         user = [user for user in self.users if user['user'] == username and user['email'] == email]
         return len(user), user[0]["blocked"]
 
+    def check_user_or_email_exists(self, username, email):
+        user = [user for user in self.users if user['user'] == username or user['email'] == email]
+        return len(user)
+
     def get_authentication_methods(self, username):
         passwords = next(user["passwords"] for user in self.users if user['user'] == username)
 
