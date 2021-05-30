@@ -15,3 +15,18 @@ DIGIT_REGEX = r"\d", "Password should contain at least 1 digit.\n"
 UPPERCASE_REGEX = r"[A-Z]", "Password should contain at least 1 uppercase.\n"
 LOWERCASE_REGEX = r"[a-z]", "Password should contain at least 1 lowercase.\n"
 SYMBOL_REGEX = r"[ !#$%&'()*+,-./[\\\]^_`{|}~" + r'"]', "Password should contain at least 1 symbol.\n"
+
+GRID_PHOTOS = {
+    0: "penguin.png",
+    1: "delicious.png",
+    2: "digg.png",
+    3: "furl.png",
+    4: "flickr.png",
+    5: "reddit.png",
+    6: "rss.png",
+    7: "stumbleupon.png",
+    8: "yahoo.png",
+    9: "youtube.png",
+    10: "technorati.png",
+    11: "fish.png",
+}

@@ -8,8 +8,8 @@ from validate_email import validate_email
 
 from Screens.AuthenticationScreens.grid_photos_screen import GRID_PHOTO_PATH
 from Screens.AuthenticationScreens.pixels_screen import PIXEL_PHOTO_PATH
-from Utils.common import HASH_ITERATIONS_AMOUNT
-from Utils.general_utils import random_salt
+from Utils.common import HASH_ITERATIONS_AMOUNT, GRID_PHOTOS
+from Utils.general_utils import random_salt, random_numbers
 from Utils.json_utils import add_new_user
 from Utils.tkinter_utils import add_entry, add_screen, destroy_screens, info_screen
 
@@ -77,28 +77,23 @@ class Register(object):
         return salt + binascii.hexlify(hashed_password)
 
     def _build_grid_password(self, i):
-        self.grid_password += str(i)
+        self.grid_password += str(i) + ","
 
-    def _add_photo_button(self, photo_name, screen, row, column, i):
-        image = Image.open(GRID_PHOTO_PATH + "\\" + photo_name)
+    def _add_photo_button(self, screen, index, photo_id):
+        image = Image.open(GRID_PHOTO_PATH + "\\" + GRID_PHOTOS[photo_id])
         photo = ImageTk.PhotoImage(image)
-        label = Button(screen, command=lambda: self._build_grid_password(i), image=photo)
+        label = Button(screen, command=lambda: self._build_grid_password(photo_id), image=photo)
+
         label.image = photo
-        label.grid(row=row, column=column)
+        label.grid(row=index // 3, column=index % 3)
 
     def _create_grid_password(self):
         self.photo_grid_screen = add_screen(self.register_screen, "Photo grid", "400x460")
 
-        # TODO: add more photos and ids
-        self._add_photo_button("delicious.png", self.photo_grid_screen, 0, 0, 0)
-        self._add_photo_button("digg.png", self.photo_grid_screen, 0, 1, 1)
-        self._add_photo_button("furl.png", self.photo_grid_screen, 0, 2, 2)
-        self._add_photo_button("flickr.png", self.photo_grid_screen, 1, 0, 3)
-        self._add_photo_button("reddit.png", self.photo_grid_screen, 1, 1, 4)
-        self._add_photo_button("rss.png", self.photo_grid_screen, 1, 2, 5)
-        self._add_photo_button("stumbleupon.png", self.photo_grid_screen, 2, 0, 6)
-        self._add_photo_button("yahoo.png", self.photo_grid_screen, 2, 1, 7)
-        self._add_photo_button("youtube.png", self.photo_grid_screen, 2, 2, 8)
+        photos_ids = random_numbers(amount=9)
+
+        for index, photo_id in enumerate(photos_ids):
+            self._add_photo_button(self.photo_grid_screen, index, photo_id)
 
         button = Button(self.photo_grid_screen, text="Finish", command=lambda: destroy_screens(self.photo_grid_screen),
                         width=10,
@@ -131,13 +126,15 @@ class Register(object):
         if not self._check_fields_validaty(username, email, text_password):
             return
 
-        grid_password, pixels_password = self._get_graphical_authentications(grid_auth, pixels_auth)
+        grid_password = self._grid_auth(grid_auth)
+        pixels_password = self._pixels_auth(pixels_auth)
 
         new_user = {
             "user": username,
             "email": email,
             "count_failed_tries": 0,
             "blocked": False,
+            "grid_photos": "1, 2, 3",
             "passwords": {
                 "text": self._hash_password(text_password).decode('ascii'),
                 "grid": grid_password,
@@ -173,7 +170,7 @@ class Register(object):
 
         return True
 
-    def _get_graphical_authentications(self, grid_auth, pixels_auth):
+    def _grid_auth(self, grid_auth):
         if grid_auth.get():
             self._create_grid_password()
             self.register_screen.wait_window(self.photo_grid_screen)
@@ -181,6 +178,9 @@ class Register(object):
         else:
             grid_password = ""
 
+        return grid_password
+
+    def _pixels_auth(self, pixels_auth):
         if pixels_auth.get():
             self._create_pixels_password()
             self.register_screen.wait_window(self.pixels_screen)
@@ -188,4 +188,4 @@ class Register(object):
         else:
             pixels_password = ""
 
-        return grid_password, pixels_password
+        return pixels_password
