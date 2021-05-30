@@ -29,7 +29,7 @@ class GridPhotosScreen(IAuthScreen):
         self.photo_grid_screen.title("Photo grid")
         self.photo_grid_screen.geometry("400x460")
 
-        photos_ids = [1, 2]  # TODO: get ids from users file
+        photos_ids = self.authenticator.get_photos_ids(username, email)
 
         for index, photo_id in enumerate(photos_ids):
             self._add_photo_button(self.photo_grid_screen, index, photo_id)
@@ -58,6 +58,6 @@ class GridPhotosScreen(IAuthScreen):
         label.grid(row=index // 3, column=index % 3)
 
     def _build_grid_password(self, i):
-        self.grid_password += str(i)
+        self.grid_password += str(i) + ","
         self._number_of_clikcs += 1
         self._finished_button_text.set("Finished (" + str(self._number_of_clikcs) + " Clicks)")

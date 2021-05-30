@@ -102,6 +102,8 @@ class Register(object):
         label.grid(row=3, column=1)
         button.grid(row=4, column=1)
 
+        return photos_ids
+
     def _create_pixels_password(self):
         self.pixels_screen = add_screen(self.register_screen, "Pixels", "750x550")
 
@@ -126,7 +128,7 @@ class Register(object):
         if not self._check_fields_validaty(username, email, text_password):
             return
 
-        grid_password = self._grid_auth(grid_auth)
+        grid_password, photos_ids = self._grid_auth(grid_auth)
         pixels_password = self._pixels_auth(pixels_auth)
 
         new_user = {
@@ -134,7 +136,7 @@ class Register(object):
             "email": email,
             "count_failed_tries": 0,
             "blocked": False,
-            "grid_photos": "1, 2, 3",
+            "grid_photos_ids": photos_ids,
             "passwords": {
                 "text": self._hash_password(text_password).decode('ascii'),
                 "grid": grid_password,
@@ -171,21 +173,21 @@ class Register(object):
         return True
 
     def _grid_auth(self, grid_auth):
+        photos_ids, grid_password = [], ""
+
         if grid_auth.get():
-            self._create_grid_password()
+            photos_ids = self._create_grid_password()
             self.register_screen.wait_window(self.photo_grid_screen)
             grid_password = self._hash_password(self.grid_password).decode('ascii')
-        else:
-            grid_password = ""
 
-        return grid_password
+        return grid_password, photos_ids
 
     def _pixels_auth(self, pixels_auth):
+        pixels_password = ""
+
         if pixels_auth.get():
             self._create_pixels_password()
             self.register_screen.wait_window(self.pixels_screen)
             pixels_password = str(self._clicks)
-        else:
-            pixels_password = ""
 
         return pixels_password

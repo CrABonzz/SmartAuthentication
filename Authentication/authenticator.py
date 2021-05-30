@@ -23,6 +23,10 @@ class Authenticator(object):
         user = [user for user in self.users if user['user'] == username and user['email'] == email]
         return len(user), user[0]["blocked"]
 
+    def get_photos_ids(self, username, email):
+        user = [user for user in self.users if user['user'] == username and user['email'] == email][0]
+        return user["grid_photos_ids"]
+
     def check_user_or_email_exists(self, username, email):
         user = [user for user in self.users if user['user'] == username or user['email'] == email]
         return len(user)
