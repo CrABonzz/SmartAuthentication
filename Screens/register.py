@@ -28,6 +28,7 @@ class Register(object):
         self.text_password_entry = None
         self.photo_grid_screen = None
         self.pixels_screen = None
+        self.lines_screen = None
 
         self.grid_password = ""  # TODO: store hidden
         self._clicks = ""
@@ -60,9 +61,14 @@ class Register(object):
         check_button = Checkbutton(self.register_screen, text="Pixels", variable=pixels_auth)
         check_button.pack(side=LEFT)
 
+        lines_auth = BooleanVar()
+        check_button = Checkbutton(self.register_screen, text="Lines", onvalue=True, offvalue=False,
+                                   variable=lines_auth)
+        check_button.pack(side=LEFT)
+
         Label(self.register_screen, text="").pack()
         Button(self.register_screen, text="Register", width=10, height=1, bg="blue",
-               command=lambda: self._register_user(grid_auth, pixels_auth)).pack(side=BOTTOM, anchor=S)
+               command=lambda: self._register_user(grid_auth, pixels_auth, lines_auth)).pack(side=BOTTOM, anchor=S)
 
     def _hash_password(self, password):
         salt = random_salt()
@@ -120,7 +126,7 @@ class Register(object):
     def _pixels_click(self, coordinates):
         self._clicks += str(coordinates.x) + "-" + str(coordinates.y) + ", "
 
-    def _register_user(self, grid_auth, pixels_auth):
+    def _register_user(self, grid_auth, pixels_auth, lines_auth):
         username = self.username.get()
         email = self.email.get()
         text_password = self.text_password.get()
@@ -130,6 +136,7 @@ class Register(object):
 
         grid_password, photos_ids = self._grid_auth(grid_auth)
         pixels_password = self._pixels_auth(pixels_auth)
+        lines_password = self._lines_auth(lines_auth)
 
         new_user = {
             "user": username,
@@ -140,7 +147,8 @@ class Register(object):
             "passwords": {
                 "text": self._hash_password(text_password).decode('ascii'),
                 "grid": grid_password,
-                "pixels": pixels_password
+                "pixels": pixels_password,
+                "lines": lines_password
             }
         }
 
@@ -191,3 +199,12 @@ class Register(object):
             pixels_password = str(self._clicks)
 
         return pixels_password
+
+    def _lines_auth(self, lines_auth):
+        lines_password = ""
+
+        if lines_auth.get():
+            self.
+            self.register_screen.wait_window(self.lines_screen)
+
+        return lines_password
