@@ -50,7 +50,7 @@ class IAuthScreen(object, metaclass=ABCMeta):
 
     def _notify_user_mail(self, username, email):
         # TODO: not every failed. but once in 5 failures...?
-        body_of_email = username + "Failure on entering user "
+        body_of_email = username + " - Many failures on entering your user "
         sender = "smart_authentication@gmail.com"
         receivers = ["b281055@gmail.com"]
 
