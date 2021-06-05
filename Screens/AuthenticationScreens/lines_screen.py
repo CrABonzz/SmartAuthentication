@@ -57,6 +57,7 @@ class LinesScreen(IAuthScreen):
         self._create(register_screen, self._reset_all_lines, button_finish_command)
 
     def handle_login(self, login_screen, username, email):
+        self.lines = []
         self._reset_all_lines()
         button_finish_command = lambda: self._verify(login_screen, username, email)
 
