@@ -36,8 +36,7 @@ class Authenticator(object):
     def get_authentication_methods(self, username):
         passwords = next(user["passwords"] for user in self.users if user['user'] == username)
 
-        optional = [key for key in passwords.keys() if passwords[key] != ""]
-        return ["text"] + optional
+        return [key for key in passwords.keys() if passwords[key] != ""]
 
     def verify_password(self, username, password_input, password_type):
         password = next(user["passwords"][password_type] for user in self.users if user['user'] == username)
@@ -68,6 +67,9 @@ class Authenticator(object):
             return False
 
         return all(self._click_close(click, expected_click) for click, expected_click in zip(clicks, coordinates))
+
+    def verify_lines_password(self, username, password_input):
+        return self.verify_password(username, password_input, "lines")
 
     def _click_close(self, click, expected_click):
         dist = math.hypot(expected_click[0] - click[0], expected_click[1] - click[1])

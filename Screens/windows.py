@@ -2,6 +2,7 @@ from tkinter import *
 
 from Authentication.authenticator import Authenticator
 from Screens.AuthenticationScreens.grid_photos_screen import GridPhotosScreen
+from Screens.AuthenticationScreens.lines_screen import LinesScreen
 from Screens.AuthenticationScreens.pixels_screen import PixelsScreen
 from Screens.AuthenticationScreens.text_screen import TextScreen
 from Screens.login import Login
@@ -20,9 +21,10 @@ class MainPage(object):
         photo_grid_screen = GridPhotosScreen(auth)
         text_screen = TextScreen(auth)
         pixels_screen = PixelsScreen(auth)
+        lines_screen = LinesScreen(auth)
 
-        self.register = Register(auth, self.main_screen, photo_grid_screen, text_screen, pixels_screen)
-        self.login = Login(auth, self.main_screen, photo_grid_screen, text_screen, pixels_screen)
+        self.register = Register(auth, self.main_screen, photo_grid_screen, text_screen, pixels_screen, lines_screen)
+        self.login = Login(auth, self.main_screen, photo_grid_screen, text_screen, pixels_screen, lines_screen)
 
         Label(text="Select Your Choice", bg="blue", width="300", height="2", font=("Calibri", 13)).pack()
         Label(text="").pack()

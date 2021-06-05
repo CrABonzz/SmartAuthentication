@@ -1,17 +1,19 @@
 from tkinter import StringVar, Label, Button, END
 
+from Utils.common import AUTH_METHODS
 from Utils.tkinter_utils import add_screen, destroy_screens, add_entry, info_screen
 
 login_success = True
 
 
 class Login(object):
-    def __init__(self, authenticator, main_screen, photo_grid_screen, text_screen, pixels_screen):
+    def __init__(self, authenticator, main_screen, photo_grid_screen, text_screen, pixels_screen, lines_screen):
         self.authenticator = authenticator
         self.main_screen = main_screen
         self.photo_grid_screen = photo_grid_screen
         self.pixels_screen = pixels_screen
         self.text_screen = text_screen
+        self.lines_screen = lines_screen
 
         self.login_screen = None
         self.user_not_found_screen = None
@@ -55,9 +57,10 @@ class Login(object):
 
         authentication_classes = {"grid": self.photo_grid_screen,
                                   "pixels": self.pixels_screen,
-                                  "text": self.text_screen}
+                                  "text": self.text_screen,
+                                  "lines": self.lines_screen}
 
-        for auth_method in ["text", "grid", "pixels"]:  # TODO: move to const
+        for auth_method in AUTH_METHODS:
             if auth_method in auth_methods:
                 screen = authentication_classes[auth_method]
                 screen.handle_login(self.login_screen, username, email)

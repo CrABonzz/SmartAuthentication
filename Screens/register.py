@@ -9,12 +9,13 @@ from Utils.tkinter_utils import add_entry, add_screen, info_screen
 
 
 class Register(object):
-    def __init__(self, auth, main_screen, photo_grid_screen, text_screen, pixels_screen):
+    def __init__(self, auth, main_screen, photo_grid_screen, text_screen, pixels_screen, lines_screen):
         self.auth = auth
         self.main_screen = main_screen
         self.photo_grid_screen = photo_grid_screen
         self.text_screen = text_screen
         self.pixels_screen = pixels_screen
+        self.lines_screen = lines_screen
 
         self.register_screen = None
         self.username = StringVar()
@@ -23,7 +24,6 @@ class Register(object):
         self.username_entry = None
         self.email_entry = None
         self.text_password_entry = None
-
 
     def add_new_user(self):
         self.register_screen = add_screen(self.main_screen, "Register", "300x250")
@@ -71,7 +71,7 @@ class Register(object):
 
         grid_password, photos_ids = self._grid_auth(grid_auth)
         pixels_password = self._pixels_auth(pixels_auth)
-        lines_password = "" #self._lines_auth(lines_auth)
+        lines_password = self._lines_auth(lines_auth)
 
         new_user = {
             "user": username,
@@ -83,7 +83,7 @@ class Register(object):
                 "text": hash_password(text_password).decode('ascii'),
                 "grid": grid_password,
                 "pixels": pixels_password,
-                "lines": lines_password
+                "lines": lines_password,
             }
         }
 
@@ -105,8 +105,10 @@ class Register(object):
             pass
 
         if not validate_email(email):
-            info_screen(self.register_screen, "Email isn't valid", "200x100")
-            return False
+            # TODO: undo in production
+            # info_screen(self.register_screen, "Email isn't valid", "200x100")
+            # return False
+            pass
 
         if self.auth.check_user_or_email_exists(username, email):
             info_screen(self.register_screen, "User already exists", "300x200",
@@ -131,14 +133,16 @@ class Register(object):
         if pixels_auth.get():
             self.pixels_screen.handle_register(self.register_screen)
             self.register_screen.wait_window(self.pixels_screen.screen)
-            pixels_password =  self.pixels_screen.password
+            pixels_password = self.pixels_screen.password
 
         return pixels_password
 
-    # def _lines_auth(self, lines_auth):
-    #     lines_password = ""
-    #
-    #     if lines_auth.get():
-    #         self.register_screen.wait_window(self.lines_screen)
-    #
-    #     return lines_password
+    def _lines_auth(self, lines_auth):
+        lines_password = ""
+
+        if lines_auth.get():
+            self.lines_screen.handle_register(self.register_screen)
+            self.register_screen.wait_window(self.lines_screen.screen)
+            lines_password = hash_password(self.lines_screen.password).decode('ascii')
+
+        return lines_password
