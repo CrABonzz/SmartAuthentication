@@ -1,20 +1,19 @@
 import smtplib
 from abc import ABCMeta, abstractmethod
 from email.mime.text import MIMEText
-from tkinter import Toplevel, Label, Button
+from tkinter import Label, Button
 
 from Screens import login
 from Utils.common import ADMIN_PASSWORD, ADMIN_MAIL
 from Utils.json_utils import update_failed_login
-from Utils.tkinter_utils import destroy_screens
+from Utils.tkinter_utils import destroy_screens, add_screen
 
 
 class IAuthScreen(object, metaclass=ABCMeta):
     @abstractmethod
-    def __init__(self, login):
+    def __init__(self, auth):
         super(IAuthScreen, self).__init__()
-        self.login_screen = login.login_screen
-        self.authenticator = login.authenticator
+        self.authenticator = auth
 
         self.password_not_recog_screen = None
 
@@ -23,24 +22,31 @@ class IAuthScreen(object, metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def create(self, username, email):
+    def password(self):
         pass
 
-    def _password_not_recognised(self):
-        self.password_not_recog_screen = Toplevel(self.login_screen)
-        self.password_not_recog_screen.title("Invalid password")
-        self.password_not_recog_screen.geometry("150x100")
+    @abstractmethod
+    def handle_register(self, register_screen):
+        pass
+
+    @abstractmethod
+    def handle_login(self, login_screen, username, email):
+        pass
+
+    def _password_not_recognised(self, login_screen):
+        self.password_not_recog_screen = add_screen(login_screen, "Invalid password", "150x100")
+
         Label(self.password_not_recog_screen, text="Invalid Password ").pack()
         Button(self.password_not_recog_screen, text="OK",
                command=lambda: destroy_screens(self.password_not_recog_screen)).pack()
 
-    def _login_failed(self, username, email):
+    def _login_failed(self, login_screen, username, email):
         login.login_success = False
 
         update_failed_login(username, email)
 
         self._notify_user_mail(username, email)
-        self._password_not_recognised()
+        self._password_not_recognised(login_screen)
 
     def _notify_user_mail(self, username, email):
         # TODO: not every failed. but once in 5 failures...?

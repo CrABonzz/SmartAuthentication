@@ -21,7 +21,9 @@ class Authenticator(object):
 
     def check_user_exists(self, username, email):
         user = [user for user in self.users if user['user'] == username and user['email'] == email]
-        return len(user), user[0]["blocked"]
+        if 0 != len(user):
+            return len(user), user[0]["blocked"]
+        return len(user), None
 
     def get_photos_ids(self, username, email):
         user = [user for user in self.users if user['user'] == username and user['email'] == email][0]
@@ -58,7 +60,9 @@ class Authenticator(object):
 
     def verify_pixels_password(self, username, clicks):
         password = next(user["passwords"]["pixels"] for user in self.users if user['user'] == username)
-        coordinates = [(int(coor.split("-")[0]), int(coor.split("-")[1])) for coor in password.split(", ")[:-1]]
+
+        coordinates = [coor[:-2] for coor in password]
+        coordinates = [(int(coor.split("-")[0]), int(coor.split("-")[1])) for coor in coordinates]
 
         if len(coordinates) != len(clicks):
             return False
