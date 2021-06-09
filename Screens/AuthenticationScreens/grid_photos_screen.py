@@ -5,7 +5,7 @@ from PIL import Image, ImageTk
 from Screens import login
 from Screens.AuthenticationScreens.authentication_screen import IAuthScreen
 from Utils.common import GRID_PHOTOS
-from Utils.general_utils import random_numbers
+from Utils.password_utils import random_numbers
 from Utils.tkinter_utils import destroy_screens, add_screen
 
 GRID_PHOTO_PATH = r"assets\grid_photos"

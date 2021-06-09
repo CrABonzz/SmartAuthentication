@@ -3,7 +3,7 @@ from tkinter import StringVar, Label, Entry, Button, END, Checkbutton, LEFT, BOT
 
 from validate_email import validate_email
 
-from Utils.general_utils import hash_password
+from Utils.password_utils import hash_password
 from Utils.json_utils import add_new_user
 from Utils.tkinter_utils import add_entry, add_screen, info_screen
 
@@ -81,7 +81,7 @@ class Register(object):
             "blocked": False,
             "grid_photos_ids": photos_ids,
             "passwords": {
-                "text": hash_password(text_password).decode('ascii'),
+                "text": hash_password(text_password),
                 "grid": grid_password,
                 "pixels": pixels_password,
                 "lines": lines_password,
@@ -127,7 +127,7 @@ class Register(object):
         if grid_auth.get():
             photos_ids = self.photo_grid_screen.handle_register(self.register_screen)
             self.register_screen.wait_window(self.photo_grid_screen.screen)
-            grid_password = hash_password(self.photo_grid_screen.password).decode('ascii')
+            grid_password = hash_password(self.photo_grid_screen.password)
 
         return grid_password, photos_ids
 
@@ -147,6 +147,6 @@ class Register(object):
         if lines_auth.get():
             self.lines_screen.handle_register(self.register_screen)
             self.register_screen.wait_window(self.lines_screen.screen)
-            lines_password = hash_password(self.lines_screen.password).decode('ascii')
+            lines_password = hash_password(self.lines_screen.password)
 
         return lines_password

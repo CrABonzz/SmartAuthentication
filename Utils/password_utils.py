@@ -14,8 +14,9 @@ def random_numbers(amount=1, max_number=len(GRID_PHOTOS)):
     return random.sample(range(max_number), amount)
 
 
-def hash_password(password):
-    salt = random_salt()
+def hash_password(password, salt=None, concat_salt=True):
+    if salt is None:
+        salt = random_salt()
 
     hashed_password = hashlib.pbkdf2_hmac(
         'sha512',
@@ -24,4 +25,7 @@ def hash_password(password):
         HASH_ITERATIONS_AMOUNT
     )
 
-    return salt + binascii.hexlify(hashed_password)
+    if not concat_salt:
+        return binascii.hexlify(hashed_password).decode('ascii')
+
+    return (salt + binascii.hexlify(hashed_password)).decode('ascii')

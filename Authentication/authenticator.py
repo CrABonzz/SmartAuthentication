@@ -7,6 +7,7 @@ import re
 
 from Utils.common import HASH_ITERATIONS_AMOUNT, HASH_RESULT_SIZE, DISTANCE_GRANUALITY, DIGIT_REGEX, SYMBOL_REGEX, \
     LOWERCASE_REGEX, UPPERCASE_REGEX
+from Utils.password_utils import hash_password
 
 
 class Authenticator(object):
@@ -42,14 +43,7 @@ class Authenticator(object):
         password = next(user["passwords"][password_type] for user in self.users if user['user'] == username)
         salt, hashed_password = password[:HASH_RESULT_SIZE], password[HASH_RESULT_SIZE:]
 
-        hashed_password_input = hashlib.pbkdf2_hmac(
-            'sha512',
-            password_input.encode('utf-8'),
-            salt.encode('ascii'),
-            HASH_ITERATIONS_AMOUNT
-        )
-
-        return hashed_password == binascii.hexlify(hashed_password_input).decode('ascii')
+        return hashed_password == hash_password(password_input, salt.encode('ascii'), False)
 
     def verify_user_text_password(self, username, password_input):
         return self.verify_password(username, password_input, "text")
