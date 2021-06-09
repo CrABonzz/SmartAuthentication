@@ -44,7 +44,7 @@ class Login(object):
         self.username_login_entry.delete(0, END)  # TODO: where?
         self.email_login_entry.delete(0, END)  # TODO: where?
 
-        user_exists, user_blocked = self.authenticator.check_user_exists(username, email)
+        user_exists, user_blocked = self.authenticator.check_user_exists(username, email, True)
         if not user_exists:
             info_screen(self.login_screen, "User not found", "150x100")
             return
