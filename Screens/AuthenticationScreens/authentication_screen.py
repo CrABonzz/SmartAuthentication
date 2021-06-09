@@ -10,8 +10,15 @@ from Utils.tkinter_utils import destroy_screens, add_screen
 
 
 class IAuthScreen(object, metaclass=ABCMeta):
+    """
+    Interface for any screen performing user authentication
+    """
     @abstractmethod
     def __init__(self, auth):
+        """
+        :param auth: Verifier class
+        :type auth: Authenticator
+        """
         super(IAuthScreen, self).__init__()
         self.authenticator = auth
 
@@ -19,18 +26,38 @@ class IAuthScreen(object, metaclass=ABCMeta):
 
     @abstractmethod
     def screen(self):
+        """
+        :return: The handle to the screen
+        """
         pass
 
     @abstractmethod
     def password(self):
+        """
+        :return: The raw password
+        """
         pass
 
     @abstractmethod
     def handle_register(self, register_screen):
+        """
+        This screen register page
+        :param register_screen: The register screen
+        :type register_screen: <class 'tkinter.Toplevel'><class 'tkinter.Toplevel'>
+        """
         pass
 
     @abstractmethod
     def handle_login(self, login_screen, username, email):
+        """
+        This screen login page
+        :param login_screen: The login screen
+        :type login_screen: <class 'tkinter.Toplevel'><class 'tkinter.Toplevel'>
+        :param username: Username of the failed user
+        :type username: str
+        :param email: Email of the failed user
+        :type email: str
+        """
         pass
 
     def _password_not_recognised(self, login_screen):
@@ -41,6 +68,14 @@ class IAuthScreen(object, metaclass=ABCMeta):
                command=lambda: destroy_screens(self.password_not_recog_screen)).pack()
 
     def _login_failed(self, login_screen, username, email):
+        """
+        :param login_screen: The login screen
+        :type login_screen: <class 'tkinter.Toplevel'><class 'tkinter.Toplevel'>
+        :param username: Username of the failed user
+        :type username: str
+        :param email: Email of the failed user
+        :type email: str
+        """
         login.login_success = False
 
         update_failed_login(username, email)

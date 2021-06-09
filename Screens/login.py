@@ -49,10 +49,12 @@ class Login(object):
             info_screen(self.login_screen, "User not found", "150x100")
             return
 
+        # If there were many failed entries, the user is blocked
         if user_blocked:
             info_screen(self.login_screen, "User is temporary blocked", "150x100")
             return
 
+        # Get all the authentication ways the user registered to
         auth_methods = self.authenticator.get_authentication_methods(username)
 
         authentication_classes = {"grid": self.photo_grid_screen,
@@ -60,6 +62,7 @@ class Login(object):
                                   "text": self.text_screen,
                                   "lines": self.lines_screen}
 
+        # Create and wait for each authentication way
         for auth_method in AUTH_METHODS:
             if auth_method in auth_methods:
                 screen = authentication_classes[auth_method]

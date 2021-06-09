@@ -71,6 +71,9 @@ class GridPhotosScreen(IAuthScreen):
             self._login_failed(login_screen, username, email)
 
     def _add_photo_button(self, screen, index, photo_id):
+        """
+        Add one box
+        """
         image = Image.open(GRID_PHOTO_PATH + "\\" + GRID_PHOTOS[photo_id])
         photo = ImageTk.PhotoImage(image)
         label = Button(screen, command=lambda: self._build_grid_password(photo_id), image=photo)

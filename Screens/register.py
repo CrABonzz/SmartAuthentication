@@ -73,6 +73,7 @@ class Register(object):
         pixels_password = self._pixels_auth(pixels_auth)
         lines_password = self._lines_auth(lines_auth)
 
+        # The format of the user data in the json file on the disk
         new_user = {
             "user": username,
             "email": email,
@@ -96,6 +97,9 @@ class Register(object):
         info_screen(self.register_screen, "Register success", "128x100")
 
     def _check_fields_validaty(self, username, email, password):
+        """
+        The that the user data is acceptable
+        """
         password_mismatch = self.auth.password_strong(password)
 
         if password_mismatch != "":
