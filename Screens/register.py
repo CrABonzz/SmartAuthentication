@@ -115,7 +115,7 @@ class Register(object):
             pass
 
         user_exists, _ = self.auth.check_user_exists(username, email)
-        if not user_exists:
+        if user_exists:
             info_screen(self.register_screen, "User already exists", "300x200",
                         "User with this username or email already exists")
             return False
