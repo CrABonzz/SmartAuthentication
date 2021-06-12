@@ -1,4 +1,4 @@
-from tkinter import Label, Entry, Toplevel, Button
+from tkinter import Label, Entry, Toplevel, Button, BooleanVar, Checkbutton, LEFT
 
 
 def add_entry(screen, text, variable):
@@ -33,3 +33,10 @@ def info_screen(top_screen, title, size, label_text=None):
     Button(screen, text="Okay", command=lambda: destroy_screens(screen)).pack()
 
     return screen
+
+def auth_method_checkbox(screen, text):
+    auth_method = BooleanVar()
+    check_button = Checkbutton(screen, text=text, variable=auth_method, onvalue=True, offvalue=False)
+    check_button.pack(side=LEFT)
+
+    return auth_method

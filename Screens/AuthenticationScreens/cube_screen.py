@@ -47,7 +47,6 @@ class CubeScreen(IAuthScreen):
         Button(self.cube_screen, text="Clear", width=20, height=1,
                command=button_clear_command).pack()
 
-
     def handle_register(self, register_screen):
         button_finish_command = lambda: destroy_screens(self.cube_screen)
 
@@ -69,22 +68,21 @@ class CubeScreen(IAuthScreen):
             self._reset_all_lines()
             self._login_failed(login_screen, username, email)
 
-    def _reset_current_line(self, event):
-        self.current = None
-
     def _mouse_down(self, event):
         event.widget.focus_set()  # so escape key will work
 
         if self.current is None:
             x0 = event.x
             y0 = event.y
+            self.current = event.widget.create_rectangle(x0, y0, event.x, event.y)
+
         else:
             coords = event.widget.coords(self.current)
             x0 = coords[2]
             y0 = coords[3]
 
-        self.current = event.widget.create_rectangle(x0, y0, event.x, event.y)
-        # self.lines += [self.current]
+            self._password = coords
+            destroy_screens(self.cube_screen)
 
     def _motion(self, event):
         if self.current:
@@ -98,11 +96,6 @@ class CubeScreen(IAuthScreen):
             event.widget.coords(self.current, *coords)
 
     def _reset_all_lines(self):
+        self.drawing.delete(self.current)
         self.current = None
-
-        if self.drawing is not None:
-            for line in self.lines:
-                self.drawing.delete(line)
-
         self._password = ""
-        self.lines = []

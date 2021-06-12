@@ -5,7 +5,7 @@ from validate_email import validate_email
 
 from Utils.password_utils import hash_password
 from Utils.json_utils import add_new_user
-from Utils.tkinter_utils import add_entry, add_screen, info_screen
+from Utils.tkinter_utils import add_entry, add_screen, info_screen, auth_method_checkbox
 
 
 class Register(object):
@@ -27,7 +27,7 @@ class Register(object):
         self.text_password_entry = None
 
     def add_new_user(self):
-        self.register_screen = add_screen(self.main_screen, "Register", "300x250")
+        self.register_screen = add_screen(self.main_screen, "Register", "350x300")
 
         Label(self.register_screen, text="Please enter details below", bg="blue").pack()
         Label(self.register_screen, text="").pack()
@@ -45,24 +45,17 @@ class Register(object):
         check_button.select()
         check_button.pack(anchor=W, side=LEFT)
 
-        grid_auth = BooleanVar()
-        check_button = Checkbutton(self.register_screen, text="Grid", onvalue=True, offvalue=False, variable=grid_auth)
-        check_button.pack(side=LEFT)
+        grid_auth = auth_method_checkbox(self.register_screen, "Grid")
+        pixels_auth = auth_method_checkbox(self.register_screen, "Pixels")
+        lines_auth = auth_method_checkbox(self.register_screen, "Lines")
+        cube_auth = auth_method_checkbox(self.register_screen, "Cube")
 
-        pixels_auth = BooleanVar()
-        check_button = Checkbutton(self.register_screen, text="Pixels", variable=pixels_auth)
-        check_button.pack(side=LEFT)
-
-        lines_auth = BooleanVar()
-        check_button = Checkbutton(self.register_screen, text="Lines", onvalue=True, offvalue=False,
-                                   variable=lines_auth)
-        check_button.pack(side=LEFT)
 
         Label(self.register_screen, text="").pack()
         Button(self.register_screen, text="Register", width=10, height=1, bg="blue",
-               command=lambda: self._register_user(grid_auth, pixels_auth, lines_auth)).pack(side=BOTTOM, anchor=S)
+               command=lambda: self._register_user(grid_auth, pixels_auth, lines_auth, cube_auth)).pack(side=BOTTOM, anchor=S)
 
-    def _register_user(self, grid_auth, pixels_auth, lines_auth):
+    def _register_user(self, grid_auth, pixels_auth, lines_auth, cube_auth):
         username = self.username.get()
         email = self.email.get()
         text_password = self.text_password.get()
@@ -70,11 +63,10 @@ class Register(object):
         if not self._check_fields_validaty(username, email, text_password):
             return
 
-        self.cube_screen.handle_register(self.register_screen)
-
         grid_password, photos_ids = self._grid_auth(grid_auth)
         pixels_password = self._pixels_auth(pixels_auth)
         lines_password = self._lines_auth(lines_auth)
+        cube_password = self._cube_auth(cube_auth)
 
         # The format of the user data in the json file on the disk
         new_user = {
@@ -88,6 +80,7 @@ class Register(object):
                 "grid": grid_password,
                 "pixels": pixels_password,
                 "lines": lines_password,
+                "cube": cube_password
             }
         }
 
@@ -154,3 +147,14 @@ class Register(object):
             lines_password = hash_password(self.lines_screen.password)
 
         return lines_password
+
+    def _cube_auth(self, cubes_auth):
+        cube_password = ""
+
+        if cubes_auth.get():
+            self.cube_screen.handle_register(self.register_screen)
+            self.register_screen.wait_window(self.cube_screen.screen)
+            cube_password = self.cube_screen.password
+
+        return cube_password
+
