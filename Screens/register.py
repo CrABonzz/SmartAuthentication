@@ -9,13 +9,14 @@ from Utils.tkinter_utils import add_entry, add_screen, info_screen
 
 
 class Register(object):
-    def __init__(self, auth, main_screen, photo_grid_screen, text_screen, pixels_screen, lines_screen):
+    def __init__(self, auth, main_screen, photo_grid_screen, text_screen, pixels_screen, lines_screen, cube_screen):
         self.auth = auth
         self.main_screen = main_screen
         self.photo_grid_screen = photo_grid_screen
         self.text_screen = text_screen
         self.pixels_screen = pixels_screen
         self.lines_screen = lines_screen
+        self.cube_screen = cube_screen
 
         self.register_screen = None
         self.username = StringVar()
@@ -68,6 +69,8 @@ class Register(object):
 
         if not self._check_fields_validaty(username, email, text_password):
             return
+
+        self.cube_screen.handle_register(self.register_screen)
 
         grid_password, photos_ids = self._grid_auth(grid_auth)
         pixels_password = self._pixels_auth(pixels_auth)
