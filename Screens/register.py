@@ -9,14 +9,13 @@ from Utils.tkinter_utils import add_entry, add_screen, info_screen, auth_method_
 
 
 class Register(object):
-    def __init__(self, auth, main_screen, photo_grid_screen, text_screen, pixels_screen, lines_screen, cube_screen):
+    def __init__(self, auth, main_screen, photo_grid_screen, text_screen, pixels_screen, lines_screen):
         self.auth = auth
         self.main_screen = main_screen
         self.photo_grid_screen = photo_grid_screen
         self.text_screen = text_screen
         self.pixels_screen = pixels_screen
         self.lines_screen = lines_screen
-        self.cube_screen = cube_screen
 
         self.register_screen = None
         self.username = StringVar()
@@ -48,14 +47,13 @@ class Register(object):
         grid_auth = auth_method_checkbox(self.register_screen, "Grid")
         pixels_auth = auth_method_checkbox(self.register_screen, "Pixels")
         lines_auth = auth_method_checkbox(self.register_screen, "Lines")
-        cube_auth = auth_method_checkbox(self.register_screen, "Cube")
-
 
         Label(self.register_screen, text="").pack()
         Button(self.register_screen, text="Register", width=10, height=1, bg="blue",
-               command=lambda: self._register_user(grid_auth, pixels_auth, lines_auth, cube_auth)).pack(side=BOTTOM, anchor=S)
+               command=lambda: self._register_user(grid_auth, pixels_auth, lines_auth)).pack(side=BOTTOM,
+                                                                                             anchor=S)
 
-    def _register_user(self, grid_auth, pixels_auth, lines_auth, cube_auth):
+    def _register_user(self, grid_auth, pixels_auth, lines_auth):
         username = self.username.get()
         email = self.email.get()
         text_password = self.text_password.get()
@@ -66,7 +64,6 @@ class Register(object):
         grid_password, photos_ids = self._grid_auth(grid_auth)
         pixels_password = self._pixels_auth(pixels_auth)
         lines_password = self._lines_auth(lines_auth)
-        cube_password = self._cube_auth(cube_auth)
 
         # The format of the user data in the json file on the disk
         new_user = {
@@ -79,8 +76,7 @@ class Register(object):
                 "text": hash_password(text_password),
                 "grid": grid_password,
                 "pixels": pixels_password,
-                "lines": lines_password,
-                "cube": cube_password
+                "lines": lines_password
             }
         }
 
@@ -147,14 +143,3 @@ class Register(object):
             lines_password = hash_password(self.lines_screen.password)
 
         return lines_password
-
-    def _cube_auth(self, cubes_auth):
-        cube_password = ""
-
-        if cubes_auth.get():
-            self.cube_screen.handle_register(self.register_screen)
-            self.register_screen.wait_window(self.cube_screen.screen)
-            cube_password = self.cube_screen.password
-
-        return cube_password
-
