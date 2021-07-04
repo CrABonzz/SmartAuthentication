@@ -1,11 +1,11 @@
 from tkinter import Label, END, StringVar, Button, Canvas
 
 from Screens import login
-from Screens.AuthenticationScreens.authentication_screen import IAuthScreen
+from Screens.AuthenticationScreens.authentication_screen import AuthScreen
 from Utils.tkinter_utils import destroy_screens, add_screen
 
 
-class LinesScreen(IAuthScreen):
+class LinesScreen(AuthScreen):
     LENGTH = 500
 
     WIDTH = 4

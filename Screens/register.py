@@ -95,16 +95,12 @@ class Register(object):
         password_mismatch = self.auth.password_strong(password)
 
         if password_mismatch != "":
-            # TODO: undo in production
-            # info_screen(self.register_screen, "Password isn't strong", "300x200", password_mismatch)
-            # return False
-            pass
+            info_screen(self.register_screen, "Password isn't strong", "300x200", password_mismatch)
+            return False
 
         if not validate_email(email):
-            # TODO: undo in production
-            # info_screen(self.register_screen, "Email isn't valid", "200x100")
-            # return False
-            pass
+            info_screen(self.register_screen, "Email isn't valid", "200x100")
+            return False
 
         user_exists, _ = self.auth.check_user_exists(username, email)
         if user_exists:

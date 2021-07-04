@@ -1,5 +1,5 @@
 from Screens import login
-from Screens.AuthenticationScreens.authentication_screen import IAuthScreen
+from Screens.AuthenticationScreens.authentication_screen import AuthScreen
 from tkinter import StringVar, Toplevel, Label, Entry, Button, END, RAISED, BOTTOM, TOP
 from PIL import Image, ImageTk
 
@@ -8,7 +8,7 @@ from Utils.tkinter_utils import destroy_screens, add_screen
 PIXEL_PHOTO_PATH = r"assets\pixels_photos"
 
 
-class PixelsScreen(IAuthScreen):
+class PixelsScreen(AuthScreen):
     def __init__(self, auth):
         super().__init__(auth)
 

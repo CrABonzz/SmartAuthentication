@@ -3,7 +3,7 @@ from tkinter import StringVar, Toplevel, Label, Button, Image
 from PIL import Image, ImageTk
 
 from Screens import login
-from Screens.AuthenticationScreens.authentication_screen import IAuthScreen
+from Screens.AuthenticationScreens.authentication_screen import AuthScreen
 from Utils.common import GRID_PHOTOS
 from Utils.password_utils import random_numbers
 from Utils.tkinter_utils import destroy_screens, add_screen
@@ -11,7 +11,7 @@ from Utils.tkinter_utils import destroy_screens, add_screen
 GRID_PHOTO_PATH = r"assets\grid_photos"
 
 
-class GridPhotosScreen(IAuthScreen):
+class GridPhotosScreen(AuthScreen):
     def __init__(self, auth):
         super().__init__(auth)
 

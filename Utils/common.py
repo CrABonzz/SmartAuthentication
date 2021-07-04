@@ -8,7 +8,7 @@ DISTANCE_GRANUALITY = 45
 ADMIN_MAIL = "smart.authentication.project@gmail.com"
 ADMIN_PASSWORD = "Ss112233"
 
-MAX_FAILED_LOGIN_ATTEMPTS = 10  # TODO: set me
+MAX_FAILED_LOGIN_ATTEMPTS = 7
 
 # Password regexs
 DIGIT_REGEX = r"\d", "Password should contain at least 1 digit.\n"

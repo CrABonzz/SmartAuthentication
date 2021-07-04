@@ -41,8 +41,8 @@ class Login(object):
         username = self.username.get()
         email = self.email.get()
 
-        self.username_login_entry.delete(0, END)  # TODO: where?
-        self.email_login_entry.delete(0, END)  # TODO: where?
+        self.username_login_entry.delete(0, END)
+        self.email_login_entry.delete(0, END)
 
         user_exists, user_blocked = self.authenticator.check_user_exists(username, email, True)
         if not user_exists:

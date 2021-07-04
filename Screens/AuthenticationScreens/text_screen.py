@@ -1,11 +1,11 @@
 from tkinter import Label, Entry, Toplevel, END, StringVar, Button
 
 from Screens import login
-from Screens.AuthenticationScreens.authentication_screen import IAuthScreen
+from Screens.AuthenticationScreens.authentication_screen import AuthScreen
 from Utils.tkinter_utils import destroy_screens, add_screen
 
 
-class TextScreen(IAuthScreen):
+class TextScreen(AuthScreen):
     def __init__(self, auth):
         super().__init__(auth)
 

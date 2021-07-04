@@ -4,22 +4,23 @@ from email.mime.text import MIMEText
 from tkinter import Label, Button
 
 from Screens import login
-from Utils.common import ADMIN_PASSWORD, ADMIN_MAIL
+from Utils.common import ADMIN_PASSWORD, ADMIN_MAIL, MAX_FAILED_LOGIN_ATTEMPTS
 from Utils.json_utils import update_failed_login
 from Utils.tkinter_utils import destroy_screens, add_screen
 
 
-class IAuthScreen(object, metaclass=ABCMeta):
+class AuthScreen(object, metaclass=ABCMeta):
     """
     Interface for any screen performing user authentication
     """
+
     @abstractmethod
     def __init__(self, auth):
         """
         :param auth: Verifier class
         :type auth: Authenticator
         """
-        super(IAuthScreen, self).__init__()
+        super(AuthScreen, self).__init__()
         self.authenticator = auth
 
         self.password_not_recog_screen = None
@@ -84,10 +85,9 @@ class IAuthScreen(object, metaclass=ABCMeta):
         self._password_not_recognised(login_screen)
 
     def _notify_user_mail(self, username, email):
-        # TODO: not every failed. but once in 5 failures...?
-        body_of_email = username + " - Many failures on entering your user "
+        body_of_email = username + " Failed login attempt to your user"
         sender = "smart_authentication@gmail.com"
-        receivers = ["b281055@gmail.com"]
+        receivers = [email]
 
         msg = MIMEText(body_of_email, "html")
         msg["Subject"] = username + " many failed login attempts"
