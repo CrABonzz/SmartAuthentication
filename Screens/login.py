@@ -7,6 +7,7 @@ login_success = True
 
 
 class Login(object):
+    """ The login screen, presents the user all the passwords he needs to pass """
     def __init__(self, authenticator, main_screen, photo_grid_screen, text_screen, pixels_screen, lines_screen):
         self.authenticator = authenticator
         self.main_screen = main_screen

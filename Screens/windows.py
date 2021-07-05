@@ -10,12 +10,16 @@ from Screens.register import Register
 
 
 class MainPage(object):
+    """
+    The main screen presented to the user at the beginning
+    """
     def __init__(self):
         self.main_screen = Tk()
 
         self.main_screen.geometry("300x250")
         self.main_screen.title("Main page")
 
+        # Create all the authentication methods
         auth = Authenticator()
 
         photo_grid_screen = GridPhotosScreen(auth)

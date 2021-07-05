@@ -8,6 +8,10 @@ from Utils.password_utils import hash_password
 
 
 class Authenticator(object):
+    """
+    Handles all the inner logic of verification.
+    Interacts with the passwords file.
+    """
     def __init__(self):
         self.users = None
         self.update_users_file()

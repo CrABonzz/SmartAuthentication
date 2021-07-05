@@ -33,6 +33,7 @@ class LinesScreen(AuthScreen):
         self.drawing.pack()
         self._draw_grid()
 
+        # Set the user's mouse callbacks
         self.drawing.bind("<Motion>", self._motion)
         self.drawing.bind("<ButtonPress-1>", self._mouse_down)
 
@@ -86,6 +87,7 @@ class LinesScreen(AuthScreen):
         return int(event.y * self.WIDTH / self.LENGTH) * 4 + int(event.x * self.WIDTH / self.LENGTH)
 
     def _mouse_down(self, event):
+        """ QT callback on pressing mouse """
         event.widget.focus_set()  # so escape key will work
 
         if self.current is None:
@@ -101,6 +103,7 @@ class LinesScreen(AuthScreen):
         self._password += str(self._get_cube_index(event)) + ", "
 
     def _motion(self, event):
+        """ QT callback for mouse moving """
         if self.current:
             # modify the current line by changing the end coordinates
             # to be the current mouse position

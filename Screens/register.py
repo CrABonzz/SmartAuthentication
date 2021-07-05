@@ -9,6 +9,9 @@ from Utils.tkinter_utils import add_entry, add_screen, info_screen, auth_method_
 
 
 class Register(object):
+    """
+    The register screen, handles adding new users
+    """
     def __init__(self, auth, main_screen, photo_grid_screen, text_screen, pixels_screen, lines_screen):
         self.auth = auth
         self.main_screen = main_screen
@@ -90,7 +93,7 @@ class Register(object):
 
     def _check_fields_validaty(self, username, email, password):
         """
-        The that the user data is acceptable
+        Check that the user data is valid
         """
         password_mismatch = self.auth.password_strong(password)
 
